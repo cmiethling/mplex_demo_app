@@ -1,0 +1,40 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.cmiethling.mplex</groupId>
+        <artifactId>mplex-suite</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>mplex-emulator</artifactId>
+
+    <name>Emulator Application</name>
+    <description>
+        An application that can be used to emulate the Modaplex instrument.
+        It is used by developers and testers for verifying the behavior of the Controller application.
+        Unit tests are using this emulator without the user interface.
+        The target platforms are Windows and Linux.
+        It uses JavaFX as the user interface technology.
+    </description>
+
+    <dependencies>
+        <!-- MPlex deps -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mplex-device</artifactId>
+        </dependency>
+
+        <!-- Rest -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

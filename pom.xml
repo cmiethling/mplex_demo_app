@@ -1,0 +1,151 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.cmiethling.mplex</groupId>
+    <artifactId>mplex-suite</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>MPLEX Suite</name>
+    <description>
+        Aggregator that manages all modules and parent that defines plugin versions and dependencies.
+    </description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <java.version>21</java.version>
+        <!-- <spring.version>${project.parent.version}</spring.version> geht leider nicht!-->
+        <spring.version>3.3.2</spring.version>
+        <json.version>20240303</json.version>
+    </properties>
+
+    <distributionManagement>
+        <!-- This supposed to be the place where the documentation will be deployed. It is required by some plugins. -->
+        <site>
+            <id>mplex-suite-site</id>
+            <name>MPLEX Suite Site</name>
+            <url>http://localhost:8090/mplex</url>
+        </site>
+    </distributionManagement>
+
+    <!-- All modules are build with this reactor. -->
+    <modules>
+        <!--        <module>commons</module>-->
+        <!--        <module>script</module>-->
+        <module>device</module>
+        <module>emulator</module>
+        <!--        <module>controller</module>-->
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!--
+                Mplex project dependencies, used by Mplex applications.
+                Do not add the top-level projects (e.g. applications, plugins) itself!
+            -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>mplex-device</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>${project.groupId}</groupId>-->
+            <!--                <artifactId>modaplex-commons</artifactId>-->
+            <!--                <version>${project.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>${project.groupId}</groupId>-->
+            <!--                <artifactId>mplex-script</artifactId>-->
+            <!--                <version>${project.version}</version>-->
+            <!--            </dependency>-->
+
+            <!-- Web Sockets dependencies -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-websocket</artifactId>
+                <version>${spring.version}</version>
+                <!--                <version>3.3.2</version>-->
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
+            </dependency>
+
+            <!-- Test dependencies -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>mplex-emulator</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- All module will have these dependencies by default -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-validation</artifactId>-->
+        <!--        </dependency>-->
+
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
