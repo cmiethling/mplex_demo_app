@@ -1,20 +1,26 @@
-package com.cmiethling.mplex.device;
+package com.cmiethling.mplex.device.message;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.cmiethling.mplex.device.DeviceMessageException;
+import com.cmiethling.mplex.device.config.DeviceMessageConfig;
+import com.cmiethling.mplex.device.service.DeviceMessageService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = TestConfiguration.class)
+@SpringJUnitConfig(classes = {DeviceMessageService.class, DeviceMessageConfig.class})
 public final class ResultMessageTest {
 
     private static final UUID ANY_UUID = UUID.fromString("2e4107c4-8773-4e62-a400-7e7c8195e918");
 
+    @Autowired
+    private DeviceMessageService deviceMessageService;
+
     @Test
-    public void fromJson() throws DeviceMessageException, JsonProcessingException {
+    public void fromJson() throws DeviceMessageException {
         final var json = """
                 {
                     "type": "result",
@@ -25,9 +31,10 @@ public final class ResultMessageTest {
                     "result": {
                         "x-pos": 42.43
                     }
-                }""";
+                }
+                """;
 
-        final var message = DeviceMessage.toDeviceMessage(json);
+        final var message = this.deviceMessageService.deserializeMessage(json);
         assertFalse(message.isRequest());
         assertTrue(message.isResult());
         assertFalse(message.isEvent());
@@ -52,25 +59,26 @@ public final class ResultMessageTest {
         message.parameters().putBoolean("async", true);
         final var params2 = message.parameters().addNested("innerParams");
         params2.putString("insideMode", "not smooth");
-        final var json = DeviceMessage.toJson(message);
+        final var json = this.deviceMessageService.serializeMessage(message);
         // System.out.println(json);
         final var expected = """
                 {
-                  "type" : "result",
-                  "id" : "2e4107c4-8773-4e62-a400-7e7c8195e918",
-                  "subsystem" : "motorcontrol",
-                  "topic" : "move",
-                  "error" : "NoError",
-                  "result" : {
-                    "mode" : "smooth",
-                    "async" : true,
-                    "innerParams" : {
-                      "insideMode" : "not smooth"
+                  "type": "result",
+                  "id": "2e4107c4-8773-4e62-a400-7e7c8195e918",
+                  "subsystem": "motorcontrol",
+                  "topic": "move",
+                  "error": "NoError",
+                  "result": {
+                    "mode": "smooth",
+                    "async": true,
+                    "innerParams": {
+                      "insideMode": "not smooth"
                     },
-                    "x-pos" : 42.42,
-                    "speed" : 100
+                    "x-pos": 42.42,
+                    "speed": 100
                   }
-                }""";
+                }
+                """;
         assertEquals(expected, json);
     }
 

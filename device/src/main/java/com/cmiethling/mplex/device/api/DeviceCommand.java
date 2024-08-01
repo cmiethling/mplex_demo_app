@@ -1,7 +1,11 @@
 package com.cmiethling.mplex.device.api;
 
-import com.cmiethling.mplex.device.*;
-import com.cmiethling.mplex.device.impl.DeviceModule;
+import com.cmiethling.mplex.device.DeviceCommandException;
+import com.cmiethling.mplex.device.DeviceMessageException;
+import com.cmiethling.mplex.device.config.DeviceModule;
+import com.cmiethling.mplex.device.message.RequestMessage;
+import com.cmiethling.mplex.device.message.ResultMessage;
+import com.cmiethling.mplex.device.message.Subsystem;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;

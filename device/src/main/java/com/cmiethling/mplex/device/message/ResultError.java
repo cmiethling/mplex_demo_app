@@ -1,4 +1,4 @@
-package com.cmiethling.mplex.device;
+package com.cmiethling.mplex.device.message;
 
 import lombok.Getter;
 
@@ -13,7 +13,7 @@ public enum ResultError {
      * This is the value for any unknown error.
      *
      * @implNote the String must not be {@code null}+empty otherwise the <strong>emulator</strong> can't throw a
-     * {@link ResultError#UNKNOWN}
+     * UNKNOWN
      */
     UNKNOWN("Some String", false),
 
@@ -46,13 +46,7 @@ public enum ResultError {
     COMMAND_ERROR("TopicError", false);
 
     private final String code;
-    /**
-     * -- GETTER --
-     * Returns {@code true} if this error is a syntactical error (HAL could not read sent request), otherwise
-     * {@code false}.
-     *
-     * @return if this is a syntax error
-     */
+
     @Getter
     private final boolean syntaxError;
 

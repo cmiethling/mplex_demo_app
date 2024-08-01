@@ -1,5 +1,7 @@
 package com.cmiethling.mplex.device;
 
+import com.cmiethling.mplex.device.message.AbstractDeviceMessage;
+import com.cmiethling.mplex.device.message.Subsystem;
 import lombok.NonNull;
 
 import java.io.Serial;

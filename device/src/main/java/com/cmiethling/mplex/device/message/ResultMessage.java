@@ -1,11 +1,8 @@
-package com.cmiethling.mplex.device;
+package com.cmiethling.mplex.device.message;
 
-import com.cmiethling.mplex.device.impl.JsonMapping;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -13,12 +10,14 @@ import lombok.Setter;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.cmiethling.mplex.device.AbstractDeviceMessage.*;
+import static com.cmiethling.mplex.device.message.AbstractDeviceMessage.*;
 
 /**
  * This class represents a result that is sent from the device interface to the application. It is a response to a
  * request message.
  */
+@Setter
+@Getter
 @JsonPropertyOrder({TYPE, ID, SYSTEM, TOPIC, ERROR, RESULT})
 public final class ResultMessage extends AbstractDeviceMessage {
 
@@ -27,12 +26,8 @@ public final class ResultMessage extends AbstractDeviceMessage {
      */
     public static final String COMMAND_RETURN_VALUE = "retVal";
 
-    @JsonDeserialize(using = JsonMapping.ResultErrorDeserializer.class)
-    @JsonSerialize(using = JsonMapping.ResultErrorSerializer.class)
     @JsonProperty(ERROR)
     @NonNull
-    @Getter
-    @Setter
     private ResultError error = ResultError.NONE;
 
     /**

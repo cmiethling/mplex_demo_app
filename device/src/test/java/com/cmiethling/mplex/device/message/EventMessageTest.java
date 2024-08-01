@@ -1,12 +1,19 @@
-package com.cmiethling.mplex.device;
+package com.cmiethling.mplex.device.message;
 
+import com.cmiethling.mplex.device.DeviceMessageException;
+import com.cmiethling.mplex.device.config.DeviceMessageConfig;
+import com.cmiethling.mplex.device.service.DeviceMessageService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = TestConfiguration.class)
+@SpringJUnitConfig(classes = {DeviceMessageService.class, DeviceMessageConfig.class})
 public final class EventMessageTest {
+
+    @Autowired
+    private DeviceMessageService deviceMessageService;
 
     @Test
     public void eventToJson() throws DeviceMessageException {
@@ -14,20 +21,22 @@ public final class EventMessageTest {
         message.parameters().putString("sampleDoor", "open");
         message.parameters().putString("consumableDoor", "closed");
 
-        final var json = DeviceMessage.toJson(message);
+        final var json = this.deviceMessageService.serializeMessage(message);
         final var expected = """
                 {
-                  "type" : "event",
-                  "subsystem" : "safety",
-                  "topic" : "status",
-                  "data" : {
-                    "sampleDoor" : "open",
-                    "consumableDoor" : "closed"
+                  "type": "event",
+                  "subsystem": "safety",
+                  "topic": "status",
+                  "data": {
+                    "sampleDoor": "open",
+                    "consumableDoor": "closed"
                   }
-                }""";
+                }
+                """;
         assertEquals(expected, json);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
     public void eventFromJson() throws DeviceMessageException {
         final var json = """
@@ -35,13 +44,13 @@ public final class EventMessageTest {
                     "type": "event",
                     "subsystem": "safety",
                     "topic": "status",
-                    "data" : {
+                    "data": {
                         "sampleDoor": "open",
                         "consumableDoor": "closed"
                     }
                 }
                 """;
-        final var message = DeviceMessage.toDeviceMessage(json);
+        final var message = this.deviceMessageService.deserializeMessage(json);
         assertFalse(message.isRequest());
         assertFalse(message.isResult());
         assertTrue(message.isEvent());

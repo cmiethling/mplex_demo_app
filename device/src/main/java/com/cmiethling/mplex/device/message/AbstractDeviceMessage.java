@@ -1,18 +1,13 @@
-package com.cmiethling.mplex.device;
+package com.cmiethling.mplex.device.message;
 
-import com.cmiethling.mplex.device.impl.JsonMapping;
-import com.cmiethling.mplex.device.impl.MessageParametersImpl;
+import com.cmiethling.mplex.device.DeviceMessageException;
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.NonNull;
 
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.cmiethling.mplex.device.AbstractDeviceMessage.*;
+import static com.cmiethling.mplex.device.message.AbstractDeviceMessage.*;
 
 /**
  * Base class for all device messages, such as commands messages, result messages and event messages.
@@ -38,23 +33,13 @@ public abstract sealed class AbstractDeviceMessage implements DeviceMessage
     public static final String DATA = "data";
     public static final String SYSTEM = "subsystem";
     public static final String PARAMETERS = "parameters";
-
+    public static final String TOPIC = "topic";
+    
     static final String TYPE = "type";
     static final String ID = "id";
-    static final String TOPIC = "topic";
     static final String RESULT = "result";
     static final String ERROR = "error";
 
-    static final ObjectMapper objectMapper;
-
-    static {
-        objectMapper = new ObjectMapper();
-        // pretty print
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    }
-
-    @JsonDeserialize(using = JsonMapping.MessageParametersDeserializer.class)
-    @JsonSerialize(using = JsonMapping.MessageParametersSerializer.class)
     // no JsonProperty("name") as the "name" is different for all Subclasses
     protected final MessageParameters parameters = new MessageParametersImpl();
 
@@ -66,8 +51,6 @@ public abstract sealed class AbstractDeviceMessage implements DeviceMessage
     @NonNull
     private final String topic;
 
-    @JsonSerialize(using = JsonMapping.SubsystemSerializer.class)
-    @JsonDeserialize(using = JsonMapping.SubsystemDeserializer.class)
     @JsonProperty(SYSTEM)
     @NonNull
     private final Subsystem subsystem;

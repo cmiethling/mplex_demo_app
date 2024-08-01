@@ -1,4 +1,4 @@
-package com.cmiethling.mplex.device;
+package com.cmiethling.mplex.device.message;
 
 import java.util.stream.Stream;
 

@@ -1,13 +1,12 @@
-package com.cmiethling.mplex.device.impl;
+package com.cmiethling.mplex.device.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides access to the device module. It can be used to get information about the module and access
  * resources.
  */
-@Slf4j(topic = DeviceModule.NAME)
 public final class DeviceModule {
 
     /**
@@ -43,7 +42,7 @@ public final class DeviceModule {
      * @return the default logger
      */
     public static Logger logger() {
-        return log;
+        return LoggerFactory.getLogger(NAME);
     }
 
     /**
@@ -63,7 +62,6 @@ public final class DeviceModule {
      * @return the logger
      */
     public static Logger logger(final String name) {
-        final var extendedName = log.getName() + '.' + name;
-        return org.slf4j.LoggerFactory.getLogger(extendedName);
+        return org.slf4j.LoggerFactory.getLogger("%s.%s".formatted(NAME, name));
     }
 }

@@ -1,11 +1,13 @@
-package com.cmiethling.mplex.device;
+package com.cmiethling.mplex.device.message;
 
-import com.cmiethling.mplex.device.impl.MessageParametersImpl;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.cmiethling.mplex.device.DeviceMessageException;
+import com.cmiethling.mplex.device.config.DeviceMessageConfig;
+import com.cmiethling.mplex.device.service.DeviceMessageService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.UUID;
@@ -13,10 +15,12 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = TestConfiguration.class)
+@SpringJUnitConfig(classes = {DeviceMessageService.class, DeviceMessageConfig.class})
 public final class RequestMessageTest {
-
     private static final UUID ANY_UUID = UUID.fromString("2e4107c4-8773-4e62-a400-7e7c8195e918");
+
+    @Autowired
+    private DeviceMessageService deviceMessageService;
 
     public static Stream<Arguments> invalidJson() {
         return Stream.of(
@@ -72,8 +76,9 @@ public final class RequestMessageTest {
                         """));
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
-    public void fromJson() throws DeviceMessageException, JsonProcessingException {
+    public void fromJson() throws DeviceMessageException {
         final var json = """
                 {
                     "type": "request",
@@ -91,7 +96,7 @@ public final class RequestMessageTest {
                     }
                 }""";
 
-        final var message = DeviceMessage.toDeviceMessage(json);
+        final var message = this.deviceMessageService.deserializeMessage(json);
         assertTrue(message.isRequest());
         assertFalse(message.isResult());
         assertFalse(message.isEvent());
@@ -105,7 +110,7 @@ public final class RequestMessageTest {
         assertEquals("smooth", request.parameters().getString("mode").get());
         assertEquals(42.42, request.parameters().getRequiredDouble("x-pos"));
         assertEquals(100, request.parameters().getRequiredInt("speed"));
-        assertTrue(request.parameters().getBoolean("async").get().booleanValue());
+        assertTrue(request.parameters().getBoolean("async").get());
         final var innerParams = new MessageParametersImpl();
         innerParams.putString("insideMode", "not smooth");
         assertEquals(innerParams, request.parameters().getNested("innerParams").get());
@@ -120,31 +125,33 @@ public final class RequestMessageTest {
         message.parameters().putBoolean("async", true);
         final var params2 = message.parameters().addNested("innerParams");
         params2.putString("insideMode", "not smooth");
-        final var json = DeviceMessage.toJson(message);
+        final var json = this.deviceMessageService.serializeMessage(message);
         // System.out.println(json);
         final var expected = """
                 {
-                  "type" : "request",
-                  "id" : "2e4107c4-8773-4e62-a400-7e7c8195e918",
-                  "subsystem" : "motorcontrol",
-                  "topic" : "move",
-                  "parameters" : {
-                    "mode" : "smooth",
-                    "async" : true,
-                    "innerParams" : {
-                      "insideMode" : "not smooth"
+                  "type": "request",
+                  "id": "2e4107c4-8773-4e62-a400-7e7c8195e918",
+                  "subsystem": "motorcontrol",
+                  "topic": "move",
+                  "parameters": {
+                    "mode": "smooth",
+                    "async": true,
+                    "innerParams": {
+                      "insideMode": "not smooth"
                     },
-                    "x-pos" : 42.42,
-                    "speed" : 100
+                    "x-pos": 42.42,
+                    "speed": 100
                   }
-                }""";
+                }
+                """;
         assertEquals(expected, json);
     }
 
     @ParameterizedTest()
     @MethodSource("invalidJson")
     public void fromInvalidJson(final String json) {
-        assertThrows(DeviceMessageException.class, () -> DeviceMessage.toDeviceMessage(json).asRequest());
+        assertThrows(DeviceMessageException.class,
+                () -> this.deviceMessageService.deserializeMessage(json).asRequest());
     }
 
     @Test

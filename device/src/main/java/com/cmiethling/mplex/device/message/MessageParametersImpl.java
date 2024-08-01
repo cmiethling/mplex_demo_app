@@ -1,7 +1,7 @@
-package com.cmiethling.mplex.device.impl;
+package com.cmiethling.mplex.device.message;
 
 import com.cmiethling.mplex.device.DeviceMessageException;
-import com.cmiethling.mplex.device.MessageParameters;
+import lombok.NonNull;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -73,7 +73,7 @@ public final class MessageParametersImpl implements MessageParameters {
 
     @Override
     public void putBoolean(final String name, final boolean value) {
-        this.parameters.put(name, Boolean.valueOf(value));
+        this.parameters.put(name, value);
     }
 
     @Override
@@ -95,7 +95,7 @@ public final class MessageParametersImpl implements MessageParameters {
 
     @Override
     public void putInt(final String name, final int value) {
-        this.parameters.put(name, Integer.valueOf(value));
+        this.parameters.put(name, value);
     }
 
     @Override
@@ -117,7 +117,7 @@ public final class MessageParametersImpl implements MessageParameters {
 
     @Override
     public void putDouble(final String name, final double value) {
-        this.parameters.put(name, Double.valueOf(value));
+        this.parameters.put(name, value);
     }
 
     @Override
@@ -148,6 +148,7 @@ public final class MessageParametersImpl implements MessageParameters {
     }
 
     @Override
+    @NonNull
     public Iterator<Entry<String, Object>> iterator() {
         return this.parameters.entrySet().iterator();
     }

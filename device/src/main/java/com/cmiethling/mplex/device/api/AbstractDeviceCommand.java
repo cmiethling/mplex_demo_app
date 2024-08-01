@@ -1,6 +1,10 @@
 package com.cmiethling.mplex.device.api;
 
-import com.cmiethling.mplex.device.*;
+import com.cmiethling.mplex.device.DeviceCommandException;
+import com.cmiethling.mplex.device.DeviceMessageException;
+import com.cmiethling.mplex.device.message.RequestMessage;
+import com.cmiethling.mplex.device.message.ResultMessage;
+import com.cmiethling.mplex.device.message.Subsystem;
 import lombok.NonNull;
 
 import java.util.Optional;
@@ -56,7 +60,7 @@ public abstract class AbstractDeviceCommand<E extends SubsystemError> implements
      * override this method to set the parameters.
      */
     @Override
-    public RequestMessage toRequestMessage() throws DeviceMessageException {
+    public RequestMessage toRequestMessage() {
         this.id = this.idGenerator != null ? this.idGenerator.get() : UUID.randomUUID();
         return new RequestMessage(this.id, this.subsystem, this.topic);
     }

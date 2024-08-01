@@ -1,4 +1,6 @@
-package com.cmiethling.mplex.device;
+package com.cmiethling.mplex.device.message;
+
+import com.cmiethling.mplex.device.DeviceMessageException;
 
 import java.util.*;
 

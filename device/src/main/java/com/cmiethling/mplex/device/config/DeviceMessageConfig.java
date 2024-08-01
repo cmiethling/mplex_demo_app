@@ -1,20 +1,45 @@
-package com.cmiethling.mplex.device.impl;
+package com.cmiethling.mplex.device.config;
 
-import com.cmiethling.mplex.device.MessageParameters;
-import com.cmiethling.mplex.device.ResultError;
-import com.cmiethling.mplex.device.Subsystem;
+import com.cmiethling.mplex.device.message.MessageParameters;
+import com.cmiethling.mplex.device.message.MessageParametersImpl;
+import com.cmiethling.mplex.device.message.ResultError;
+import com.cmiethling.mplex.device.message.Subsystem;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.boot.jackson.JsonObjectSerializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-public class JsonMapping {
+@Configuration
+public class DeviceMessageConfig {
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        final ObjectMapper mapper = new ObjectMapper();
+        // enable pretty print
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        final SimpleModule module = new SimpleModule();
+        module.addSerializer(Subsystem.class, new SubsystemSerializer());
+        module.addDeserializer(Subsystem.class, new SubsystemDeserializer());
+        module.addSerializer(MessageParameters.class, new MessageParametersSerializer());
+        module.addDeserializer(MessageParameters.class, new MessageParametersDeserializer());
+        // for ResultMessage only
+        module.addSerializer(ResultError.class, new ResultErrorSerializer());
+        module.addDeserializer(ResultError.class, new ResultErrorDeserializer());
+
+        mapper.registerModule(module);
+
+        return mapper;
+    }
 
     // ################# Subsystem ######################
     public static class SubsystemSerializer extends JsonSerializer<Subsystem> {
@@ -44,9 +69,9 @@ public class JsonMapping {
                     final var value = params.get(key).get();
                     switch (value) {
                         case final String val -> jgen.writeStringField(key, val);
-                        case final Integer val -> jgen.writeNumberField(key, val.intValue());
-                        case final Double val -> jgen.writeNumberField(key, val.doubleValue());
-                        case final Boolean val -> jgen.writeBooleanField(key, val.booleanValue());
+                        case final Integer val -> jgen.writeNumberField(key, val);
+                        case final Double val -> jgen.writeNumberField(key, val);
+                        case final Boolean val -> jgen.writeBooleanField(key, val);
                         case final MessageParameters val -> {
                             jgen.writeObjectFieldStart(key);
                             serializeObject(val, jgen, provider); // recursive
@@ -87,7 +112,7 @@ public class JsonMapping {
 
         @Override
         protected MessageParameters deserializeObject(final JsonParser jsonParser, final DeserializationContext context,
-                                                      final ObjectCodec codec, final JsonNode tree) throws IOException {
+                                                      final ObjectCodec codec, final JsonNode tree) {
             return fillParamsWithFields(new MessageParametersImpl(), tree.fields());
         }
     }

@@ -1,6 +1,6 @@
-package com.cmiethling.mplex.device;
+package com.cmiethling.mplex.device.message;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.cmiethling.mplex.device.DeviceMessageException;
 
 import java.util.UUID;
 
@@ -8,21 +8,6 @@ import java.util.UUID;
  * This interface defines a device messages.
  */
 public sealed interface DeviceMessage permits AbstractDeviceMessage {
-    static String toJson(final DeviceMessage message) throws DeviceMessageException {
-        try {
-            return AbstractDeviceMessage.objectMapper.writeValueAsString(message);
-        } catch (final JsonProcessingException ex) {
-            throw new DeviceMessageException("Error writing DeviceMessage to Json string", ex, message);
-        }
-    }
-
-    static DeviceMessage toDeviceMessage(final String json) throws DeviceMessageException {
-        try {
-            return AbstractDeviceMessage.objectMapper.readValue(json, AbstractDeviceMessage.class);
-        } catch (final JsonProcessingException ex) {
-            throw new DeviceMessageException("error reading Json", ex, json);
-        }
-    }
 
     /**
      * Checks if this is a request message.
