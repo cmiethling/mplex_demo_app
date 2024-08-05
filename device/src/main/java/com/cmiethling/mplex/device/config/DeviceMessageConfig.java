@@ -7,6 +7,7 @@ import com.cmiethling.mplex.device.message.Subsystem;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.boot.jackson.JsonObjectDeserializer;
@@ -26,6 +27,8 @@ public class DeviceMessageConfig {
         final ObjectMapper mapper = new ObjectMapper();
         // enable pretty print
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        // add CustomPrettyPrinter for correct formatting
+        mapper.setDefaultPrettyPrinter(new CustomPrettyPrinter());
 
         final SimpleModule module = new SimpleModule();
         module.addSerializer(Subsystem.class, new SubsystemSerializer());
@@ -39,6 +42,27 @@ public class DeviceMessageConfig {
         mapper.registerModule(module);
 
         return mapper;
+    }
+
+    //  CustomPrettyPrinter for default (IntelliJ) formatting of json files
+    private static class CustomPrettyPrinter extends DefaultPrettyPrinter {
+        public CustomPrettyPrinter() {
+            this._objectFieldValueSeparatorWithSpaces = ": ";
+            // without whitespace for empty "parameters": {}
+            this._objectEmptySeparator = "";
+        }
+
+        @Override
+        public void writeEndObject(final JsonGenerator jg, final int nrOfValues) throws IOException {
+            super.writeEndObject(jg, nrOfValues);
+            // Only add newline at the root level
+            if (jg.getOutputContext().getParent().getCurrentName() == null) jg.writeRaw(System.lineSeparator());
+        }
+
+        @Override
+        public DefaultPrettyPrinter createInstance() {
+            return new CustomPrettyPrinter();
+        }
     }
 
     // ################# Subsystem ######################

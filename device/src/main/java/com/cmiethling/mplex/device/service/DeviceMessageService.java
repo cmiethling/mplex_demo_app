@@ -8,6 +8,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service to transform a JSON to a {@link com.cmiethling.mplex.device.message.EventMessage},
+ * {@link com.cmiethling.mplex.device.message.RequestMessage} or
+ * {@link com.cmiethling.mplex.device.message.ResultMessage} and vice versa.
+ */
 @Service
 public class DeviceMessageService {
 

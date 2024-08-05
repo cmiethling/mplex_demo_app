@@ -34,7 +34,7 @@ public abstract sealed class AbstractDeviceMessage implements DeviceMessage
     public static final String SYSTEM = "subsystem";
     public static final String PARAMETERS = "parameters";
     public static final String TOPIC = "topic";
-    
+
     static final String TYPE = "type";
     static final String ID = "id";
     static final String RESULT = "result";
@@ -71,6 +71,7 @@ public abstract sealed class AbstractDeviceMessage implements DeviceMessage
     }
 
     // abstract so JsonProperty("name") can be called in all Subclasses as the "name" is always different
+    @Override
     public abstract MessageParameters parameters();
 
     @Override
