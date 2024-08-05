@@ -12,8 +12,8 @@ import java.util.stream.Stream;
 public enum FluidicsError implements SubsystemError {
 
     NONE,
-    BUFFER_PUMP_ERROR,
-    INVALID_GEL_PUMP_STATE;
+    GEL_PUMP_ERROR,
+    GEL_PUMP_PRESSURE_TOO_HIGH;
 
     /**
      * Returns the enum value associated with the specified code.

@@ -1,6 +1,7 @@
 package com.cmiethling.mplex.device.service;
 
 import com.cmiethling.mplex.device.api.DeviceCommand;
+import com.cmiethling.mplex.device.api.DeviceEvent;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,20 @@ public class EventCommandFactory {
             return commandClass.getDeclaredConstructor().newInstance();
         } catch (final Exception ex) {
             throw new RuntimeException("Error creating command instance", ex);
+        }
+    }
+
+    /**
+     * Returns the desired event.
+     *
+     * @param eventClass the class for the desired event
+     * @return the event
+     */
+    public <T extends DeviceEvent> T event(@NonNull final Class<T> eventClass) {
+        try {
+            return eventClass.getDeclaredConstructor().newInstance();
+        } catch (final Exception ex) {
+            throw new RuntimeException("Error creating event instance", ex);
         }
     }
 }

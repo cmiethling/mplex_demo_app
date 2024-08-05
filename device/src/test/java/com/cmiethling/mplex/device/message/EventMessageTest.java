@@ -17,7 +17,7 @@ public final class EventMessageTest {
 
     @Test
     public void eventToJson() throws DeviceMessageException {
-        final var message = new EventMessage(Subsystem.SAFETY, "status");
+        final var message = new EventMessage(Subsystem.FLUIDICS, "status");
         message.parameters().putString("sampleDoor", "open");
         message.parameters().putString("consumableDoor", "closed");
 
@@ -25,7 +25,7 @@ public final class EventMessageTest {
         final var expected = """
                 {
                   "type": "event",
-                  "subsystem": "safety",
+                  "subsystem": "fluidics",
                   "topic": "status",
                   "data": {
                     "sampleDoor": "open",
@@ -42,11 +42,11 @@ public final class EventMessageTest {
         final var json = """
                 {
                     "type": "event",
-                    "subsystem": "safety",
-                    "topic": "status",
+                    "subsystem": "fluidics",
+                    "topic": "states",
                     "data": {
-                        "sampleDoor": "open",
-                        "consumableDoor": "closed"
+                        "GelPumpOn": true,
+                        "GelValveOpen": true
                     }
                 }
                 """;
@@ -56,18 +56,18 @@ public final class EventMessageTest {
         assertTrue(message.isEvent());
 
         final var event = message.asEvent();
-        System.out.println(event);
+        // System.out.println(event);
 
         assertNotNull(event);
-        assertEquals(Subsystem.SAFETY, event.getSubsystem());
-        assertEquals("status", event.getTopic());
-        assertEquals("open", event.parameters().getString("sampleDoor").get());
-        assertEquals("closed", event.parameters().getString("consumableDoor").get());
+        assertEquals(Subsystem.FLUIDICS, event.getSubsystem());
+        assertEquals("states", event.getTopic());
+        assertEquals(true, event.parameters().getBoolean("GelPumpOn").get());
+        assertEquals(true, event.parameters().getBoolean("GelValveOpen").get());
     }
 
     @Test
     public void testEquals() {
-        final var event1 = new EventMessage(Subsystem.OPTICS, "topic1");
+        final var event1 = new EventMessage(Subsystem.HIGH_VOLTAGE, "topic1");
         final var event2 = new EventMessage(Subsystem.FLUIDICS, "topic2");
 
         assertEquals(event1, event1);

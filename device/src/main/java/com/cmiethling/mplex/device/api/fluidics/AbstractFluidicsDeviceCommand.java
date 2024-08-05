@@ -2,6 +2,7 @@ package com.cmiethling.mplex.device.api.fluidics;
 
 import com.cmiethling.mplex.device.api.AbstractDeviceCommand;
 import com.cmiethling.mplex.device.message.Subsystem;
+import lombok.NonNull;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ abstract class AbstractFluidicsDeviceCommand extends AbstractDeviceCommand<Fluid
      *
      * @param topic the topic name as used in the device communication
      */
-    protected AbstractFluidicsDeviceCommand(final String topic) {
+    protected AbstractFluidicsDeviceCommand(@NonNull final String topic) {
         super(Subsystem.FLUIDICS, topic);
     }
 

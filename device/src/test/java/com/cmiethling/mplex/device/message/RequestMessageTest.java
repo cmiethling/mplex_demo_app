@@ -102,7 +102,7 @@ public final class RequestMessageTest {
         assertFalse(message.isEvent());
 
         final var request = message.asRequest();
-        System.out.println(request);
+        // System.out.println(request);
         assertNotNull(request);
         assertEquals(ANY_UUID, request.getId());
         assertEquals(Subsystem.MOTOR_CONTROL, request.getSubsystem());
@@ -156,7 +156,7 @@ public final class RequestMessageTest {
 
     @Test
     public void testEquals() {
-        final var request1 = new RequestMessage(UUID.randomUUID(), Subsystem.OPTICS, "topic1");
+        final var request1 = new RequestMessage(UUID.randomUUID(), Subsystem.HIGH_VOLTAGE, "topic1");
         final var request2 = new RequestMessage(UUID.randomUUID(), Subsystem.FLUIDICS, "topic2");
 
         assertEquals(request1, request1);

@@ -8,59 +8,19 @@ import java.util.stream.Stream;
 public enum Subsystem {
 
     /**
-     * Safety functions (e.g. doors)
-     */
-    SAFETY("safety"),
-
-    /**
-     * Camera and laser control.
-     */
-    OPTICS("optics"),
-
-    /**
      * High voltage system control hv.
      */
     HIGH_VOLTAGE("highvoltage"),
 
     /**
-     * Fluidics control.
-     */
-    FLUIDICS("fluidics"),
-
-    /**
-     * Motors control.
+     * Motors.
      */
     MOTOR_CONTROL("motorcontrol"),
 
     /**
-     * Gel cooling gc.
+     * Fluidics control.
      */
-    GEL_COOLING("gelcooling"),
-
-    /**
-     * Cartridge temperature control ctc.
-     */
-    CARTRIDGE_TEMPERATURE("cartridgetemp"),
-
-    /**
-     * Thermo cycler control tc. (Do not rename to CYCLER as the event log may have entries of THERMAL_CYCLER.)
-     */
-    THERMAL_CYCLER("thermocycler"),
-
-    /**
-     * Collection of scanner functions.
-     */
-    SCANNER("scanner"),
-
-    /**
-     * Collection of global functions.
-     */
-    GLOBAL("global"),
-
-    /**
-     * Commands used for testing only.
-     */
-    TEST("test");
+    FLUIDICS("fluidics");
 
     private final String id;
 

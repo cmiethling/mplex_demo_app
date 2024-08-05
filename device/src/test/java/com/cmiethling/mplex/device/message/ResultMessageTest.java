@@ -84,7 +84,7 @@ public final class ResultMessageTest {
 
     @Test
     public void testEquals() {
-        final var result1 = new ResultMessage(UUID.randomUUID(), Subsystem.OPTICS, "topic1");
+        final var result1 = new ResultMessage(UUID.randomUUID(), Subsystem.HIGH_VOLTAGE, "topic1");
         final var result2 = new ResultMessage(UUID.randomUUID(), Subsystem.FLUIDICS, "topic2");
 
         assertEquals(result1, result1);
