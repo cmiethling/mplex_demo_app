@@ -8,7 +8,8 @@ import java.util.List;
  * This is the base exception for all device-related exceptions. The application should never use this base class but
  * concrete subclasses.
  */
-public sealed abstract class DeviceException extends Exception permits DeviceMessageException, DeviceCommandException {
+public sealed abstract class DeviceException extends Exception permits DeviceCommandException,
+        DeviceCommunicationException, DeviceMessageException {
 
     @Serial
     private static final long serialVersionUID = 1;

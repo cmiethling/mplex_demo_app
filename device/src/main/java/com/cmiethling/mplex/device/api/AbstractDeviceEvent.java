@@ -61,6 +61,6 @@ public abstract class AbstractDeviceEvent implements DeviceEvent {
 
     @Override
     public String toString() {
-        return String.format("%s[subsystem=%s, topic=%s]", getClass().getName(), this.subsystem, this.topic);
+        return String.format("%s[subsystem=%s, topic=%s]", getClass().getSimpleName(), this.subsystem, this.topic);
     }
 }

@@ -4,15 +4,10 @@ import com.cmiethling.mplex.device.message.AbstractDeviceMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
 import lombok.NonNull;
 
-import java.io.Serial;
-
 /**
  * Creates a new exception for a known command error.
  */
 public final class DeviceCommandException extends DeviceException {
-
-    @Serial
-    private static final long serialVersionUID = 1;
 
     /**
      * Creates a new exception for a known command error.

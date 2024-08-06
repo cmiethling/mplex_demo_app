@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.stream.Stream;
 
 /**
- * Error given back by HAL as the "error" parameter of a result (not {@code retVal}!).
+ * Error given back by device as the "error" parameter of a result (not {@code retVal}!).
  */
 public enum ResultError {
 
@@ -22,26 +22,27 @@ public enum ResultError {
      */
     EMULATOR_BUSY("EmulatorBusy", false),
     /**
-     * HAL reports no error. The request sent to the device was processed successfully.
+     * Device reports no error. The request sent to the device was processed successfully.
      */
     NONE("NoError", false),
     /**
-     * HAL reports an invalid subsystem. This is a syntax error, meaning the request sent to HAL could not be read
+     * Device reports an invalid subsystem. This is a syntax error, meaning the request sent to HAL could not be read
      * properly.
      */
     INVALID_SUBSYSTEM("InvalidSubsystem", true),
     /**
-     * HAL reports an invalid topic name. This is a syntax error, meaning the
-     * request sent to HAL could not be read properly.
+     * Device reports an invalid topic name. This is a syntax error, meaning the
+     * request sent to device could not be read properly.
      */
     INVALID_TOPIC("InvalidTopic", true),
     /**
-     * HAL reports invalid parameters. At least one parameter (name or type) is invalid. This is a syntax error, meaning
-     * the request sent to HAL could not be read properly.
+     * Device reports invalid parameters. At least one parameter (name or type) is invalid. This is a syntax error,
+     * meaning
+     * the request sent to device could not be read properly.
      */
     INVALID_PARAMETERS("InvalidParameters", true),
     /**
-     * HAL reports a "topic error". (This is a command error)
+     * Device reports a "topic error". (This is a command error)
      */
     COMMAND_ERROR("TopicError", false);
 
