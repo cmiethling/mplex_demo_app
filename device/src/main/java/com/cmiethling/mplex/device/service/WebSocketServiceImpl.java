@@ -2,8 +2,8 @@ package com.cmiethling.mplex.device.service;
 
 import com.cmiethling.mplex.device.DeviceCommunicationException;
 import com.cmiethling.mplex.device.DeviceException;
+import com.cmiethling.mplex.device.DeviceModule;
 import com.cmiethling.mplex.device.api.DeviceCommand;
-import com.cmiethling.mplex.device.config.DeviceModule;
 import com.cmiethling.mplex.device.websocket.CommandTaskInfo;
 import com.cmiethling.mplex.device.websocket.DeviceEventListener;
 import com.cmiethling.mplex.device.websocket.MyWebSocketListener;
@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
  */
 public final class WebSocketServiceImpl implements WebSocketService {
 
-    private static final Logger log = DeviceModule.logger();
+    private final Logger log = DeviceModule.logger();
 
     // beans
     private final URI uri;
@@ -54,7 +54,7 @@ public final class WebSocketServiceImpl implements WebSocketService {
     public void openConnection() throws DeviceException {
         try (final var client = HttpClient.newHttpClient()) {
             final var webSocket = client.newWebSocketBuilder().buildAsync(this.uri, this.myWebSocketListener).get();
-            log.info("Device connection established");
+            this.log.info("Device connection established");
             this.webSocketClient = webSocket;
         } catch (final ExecutionException ex) {// unwrap ExeExc
             throw new DeviceCommunicationException("connectionFailed", (Exception) ex.getCause());
@@ -72,7 +72,7 @@ public final class WebSocketServiceImpl implements WebSocketService {
                     // https://stackoverflow.com/questions/27723546/completablefuture-supplyasync-and-thenapply
                     .thenApplyAsync(ws -> Boolean.TRUE)// if no exception >> ws is closed properly
                     .exceptionally(ex -> {
-                        log.error("", ex);
+                        this.log.error("", ex);
                         return Boolean.FALSE;
                     });
         }
@@ -139,7 +139,7 @@ public final class WebSocketServiceImpl implements WebSocketService {
     @Override
     public synchronized void ensureConnected() throws DeviceException {
         if (this.webSocketClient == null || this.webSocketClient.isOutputClosed()) {
-            log.info(this.webSocketClient == null ? "Device not connected yet, trying to connect to device..."
+            this.log.info(this.webSocketClient == null ? "Device not connected yet, trying to connect to device..."
                     : "Device connection was closed, trying to reconnect to device...");
             openConnection();
         }

@@ -1,9 +1,9 @@
 package com.cmiethling.mplex.device.websocket;
 
 import com.cmiethling.mplex.device.DeviceMessageException;
+import com.cmiethling.mplex.device.DeviceModule;
 import com.cmiethling.mplex.device.api.DeviceCommand;
 import com.cmiethling.mplex.device.api.DeviceEvent;
-import com.cmiethling.mplex.device.config.DeviceModule;
 import com.cmiethling.mplex.device.message.DeviceMessage;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class MyWebSocketListener implements WebSocket.Listener {
 
-    private static final Logger log = DeviceModule.logger();
+    private final Logger log = DeviceModule.logger();
     // beans
     private final DeviceMessageService deviceMessageService;
     private final List<DeviceEventListener> deviceEventListeners;
@@ -68,7 +68,7 @@ public class MyWebSocketListener implements WebSocket.Listener {
                 try {
                     computeReceivedMessage(this.deviceMessageService.deserializeMessage(json));
                 } catch (final DeviceMessageException ex) {
-                    log.error("", ex);
+                    this.log.error("", ex);
                     throw new CompletionException(ex);
                 }
             });
@@ -90,7 +90,7 @@ public class MyWebSocketListener implements WebSocket.Listener {
                 // provide the message to the task
                 taskInfo.setResultMessage(resultMessage);
             } else
-                WebSocketUtils.receiveLogger.warn("Unexpected result message, id: " + messageId);
+                WebSocketUtils.receiveLogger.warn("Unexpected result message, id: {}", messageId);
         } else if (message.isEvent()) {
             final var eventMessage = message.asEvent(); // outside ComFut because of checkedExc
 
@@ -108,14 +108,14 @@ public class MyWebSocketListener implements WebSocket.Listener {
 
     @Override
     public CompletionStage<?> onClose(final WebSocket webSocket, final int statusCode, final String reason) {
-        log.info("WebSocketClient onClose={}   >> status={}, reason: {}", webSocket, statusCode, reason);
+        this.log.info("WebSocketClient onClose={}   >> status={}, reason: {}", webSocket, statusCode, reason);
         this.commandTasks.clear();
         return null;
     }
 
     @Override
     public void onError(final WebSocket webSocket, final Throwable error) {
-        log.error("Device connection error: ", error);
+        this.log.error("Device connection error: ", error);
     }
 
     /**
