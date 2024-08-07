@@ -1,6 +1,10 @@
 package com.cmiethling.mplex.device.api;
 
-import com.cmiethling.mplex.device.*;
+import com.cmiethling.mplex.device.DeviceCommandException;
+import com.cmiethling.mplex.device.DeviceMessageException;
+import com.cmiethling.mplex.device.message.RequestMessage;
+import com.cmiethling.mplex.device.message.ResultMessage;
+import com.cmiethling.mplex.device.message.Subsystem;
 import lombok.NonNull;
 
 import java.util.Optional;
@@ -46,8 +50,10 @@ public abstract class AbstractDeviceCommand<E extends SubsystemError> implements
         return this.topic;
     }
 
-    @Override
-    public void setIdGenerator(final Supplier<UUID> idGenerator) {
+    /**
+     * Only for unit testing thus package private.
+     */
+    void setIdGenerator(@NonNull final Supplier<UUID> idGenerator) {
         this.idGenerator = idGenerator;
     }
 
@@ -56,29 +62,30 @@ public abstract class AbstractDeviceCommand<E extends SubsystemError> implements
      * override this method to set the parameters.
      */
     @Override
-    public RequestMessage toRequestMessage() throws DeviceMessageException {
+    public RequestMessage toRequestMessage() {
         this.id = this.idGenerator != null ? this.idGenerator.get() : UUID.randomUUID();
         return new RequestMessage(this.id, this.subsystem, this.topic);
     }
 
     /**
-     * This implementation fails if the result message does not match the request message. Subclasses should override
+     * This implementation fails if the result does not match the request result. Subclasses should override
      * this method to evaluate the results.
      */
     @Override
-    public void fromResultMessage(final ResultMessage message) throws DeviceMessageException, DeviceCommandException {
+    public void fromResultMessage(@NonNull final ResultMessage result) throws DeviceMessageException,
+            DeviceCommandException {
 
         // If this command has an id, check if the result matches.
         // A command may not have an id if it was not send before (like in test cases).
-        if (this.id != null && !this.id.equals(message.getId()))
-            throw new DeviceMessageException("incompatibleUUID", this.id, message.getId());
-        if (this.subsystem != message.getSubsystem())
-            throw new DeviceMessageException("incompatibleSubsystem", this.subsystem, message.getSubsystem());
-        if (!this.topic.equals(message.getTopic()))
-            throw new DeviceMessageException("incompatibleTopic", this.topic, message.getTopic());
+        if (this.id != null && !this.id.equals(result.getId()))
+            throw new DeviceMessageException("incompatibleUUID", this.id, result.getId());
+        if (this.subsystem != result.getSubsystem())
+            throw new DeviceMessageException("incompatibleSubsystem", this.subsystem, result.getSubsystem());
+        if (!this.topic.equals(result.getTopic()))
+            throw new DeviceMessageException("incompatibleTopic", this.topic, result.getTopic());
 
         // check if there is an error
-        final var error = message.getError();
+        final var error = result.getError();
         switch (error) {
             case NONE -> {
                 // there is no error, just continue
@@ -88,7 +95,7 @@ public abstract class AbstractDeviceCommand<E extends SubsystemError> implements
             case INVALID_SUBSYSTEM -> handleInvalidSubsystem();
             case INVALID_TOPIC -> handleInvalidTopic();
             case INVALID_PARAMETERS -> handleInvalidParameters();
-            case COMMAND_ERROR -> handleCommandError(message);
+            case COMMAND_ERROR -> handleCommandError(result);
             default -> throw new IllegalArgumentException(error.name());
         }
     }

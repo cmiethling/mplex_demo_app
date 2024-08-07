@@ -1,0 +1,8 @@
+{
+  "type": "event",
+  "subsystem": "fluidics",
+  "topic": "errors",
+  "data": {
+    "errorcode": 2
+  }
+}
