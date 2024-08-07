@@ -3,6 +3,7 @@ package com.cmiethling.mplex.device.api;
 import com.cmiethling.mplex.device.DeviceMessageException;
 import com.cmiethling.mplex.device.api.fluidics.ErrorsEvent;
 import com.cmiethling.mplex.device.api.fluidics.StatesEvent;
+import com.cmiethling.mplex.device.api.test.ExampleEvent;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
 import lombok.NonNull;
@@ -25,17 +26,23 @@ public interface DeviceEvent {
             case FLUIDICS -> switch (topic) {
                 case ErrorsEvent.TOPIC -> new ErrorsEvent();
                 case StatesEvent.TOPIC -> new StatesEvent();
-                default -> throw new DeviceMessageException(
-                        "eventUnknownTopic: subsystem=%s, topic=%s".formatted(subsystem, topic));
+                default -> throwInvalidTopicDMException(subsystem, topic);
             };
             case HIGH_VOLTAGE -> switch (topic) {
                 case com.cmiethling.mplex.device.api.hv.ErrorsEvent.TOPIC ->
                         new com.cmiethling.mplex.device.api.hv.ErrorsEvent();
-                default -> throw new DeviceMessageException(
-                        "eventUnknownTopic: subsystem=%s, topic=%s".formatted(subsystem, topic));
+                default -> throwInvalidTopicDMException(subsystem, topic);
+            };
+            case TEST -> switch (topic) {
+                case ExampleEvent.TOPIC -> new ExampleEvent();
+                default -> throwInvalidTopicDMException(subsystem, topic);
             };
             default -> throw new DeviceMessageException("no event exists for subsystem:%s".formatted(subsystem));
         };
+    }
+
+    private static DeviceEvent throwInvalidTopicDMException(final Subsystem subsystem, final String topic) throws DeviceMessageException {
+        throw new DeviceMessageException("eventUnknownTopic: subsystem=%s, topic=%s".formatted(subsystem, topic));
     }
 
     /**

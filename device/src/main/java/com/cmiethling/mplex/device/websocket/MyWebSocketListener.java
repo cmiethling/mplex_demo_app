@@ -9,7 +9,6 @@ import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
 import com.cmiethling.mplex.device.service.DeviceMessageService;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.http.WebSocket;
 import java.util.List;
@@ -21,18 +20,18 @@ import java.util.concurrent.ConcurrentMap;
 
 public class MyWebSocketListener implements WebSocket.Listener {
 
-    private final Logger log = DeviceModule.logger();
+    private static final Logger log = DeviceModule.logger();
+    // beans
+    private final DeviceMessageService deviceMessageService;
     private final List<DeviceEventListener> deviceEventListeners;
     private final ConcurrentMap<UUID, CommandTaskInfo<? extends DeviceCommand>> commandTasks;
     private final StringBuilder textData = new StringBuilder();
 
-    @Autowired
-    private DeviceMessageService deviceMessageService;
-
     public MyWebSocketListener(final List<DeviceEventListener> deviceEventListeners, final ConcurrentMap<UUID,
-            CommandTaskInfo<? extends DeviceCommand>> commandTasks) {
+            CommandTaskInfo<? extends DeviceCommand>> commandTasks, final DeviceMessageService deviceMessageService) {
         this.deviceEventListeners = deviceEventListeners;
         this.commandTasks = commandTasks;
+        this.deviceMessageService = deviceMessageService;
     }
 
     /**
@@ -57,7 +56,7 @@ public class MyWebSocketListener implements WebSocket.Listener {
         return onText(data, last);
     }
 
-    private CompletableFuture<?> onText(final CharSequence data, final boolean last) {
+    CompletableFuture<?> onText(final CharSequence data, final boolean last) {
         // StringBuilder must be processed in (synchronous) onText() otherwise there might be raceConditions
         this.textData.append(data);
 
@@ -69,7 +68,7 @@ public class MyWebSocketListener implements WebSocket.Listener {
                 try {
                     computeReceivedMessage(this.deviceMessageService.deserializeMessage(json));
                 } catch (final DeviceMessageException ex) {
-                    this.log.error("", ex);
+                    log.error("", ex);
                     throw new CompletionException(ex);
                 }
             });
@@ -78,7 +77,7 @@ public class MyWebSocketListener implements WebSocket.Listener {
         return new CompletableFuture<>();// this is safest because null lets the "CharSequence reclaim immediately"???
     }
 
-    private void computeReceivedMessage(final DeviceMessage message) throws DeviceMessageException {
+    void computeReceivedMessage(final DeviceMessage message) throws DeviceMessageException {
         if (message.isResult()) {
             final var resultMessage = message.asResult();
             // log the result with a result-specific logger
@@ -109,13 +108,20 @@ public class MyWebSocketListener implements WebSocket.Listener {
 
     @Override
     public CompletionStage<?> onClose(final WebSocket webSocket, final int statusCode, final String reason) {
-        this.log.info("WebSocketClient onClose={}   >> status={}, reason: {}", webSocket, statusCode, reason);
+        log.info("WebSocketClient onClose={}   >> status={}, reason: {}", webSocket, statusCode, reason);
         this.commandTasks.clear();
         return null;
     }
 
     @Override
     public void onError(final WebSocket webSocket, final Throwable error) {
-        this.log.error("Device connection error: ", error);
+        log.error("Device connection error: ", error);
     }
+
+    /**
+     * For test purposes only.
+     *
+     * @return the map with the waiting command tasks
+     */
+    ConcurrentMap<UUID, CommandTaskInfo<?>> getCommandTasks() {return this.commandTasks;}
 }

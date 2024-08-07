@@ -14,26 +14,8 @@ public final class DeviceModule {
      */
     public static final String NAME = "com.cmiethling.mplex.device";
 
-    private static final Module instance;
-
-    // private static final Logger log = Logger.getLogger(NAME);
-
-    static {
-        instance = ModuleLayer.boot().findModule(NAME)
-                .orElseThrow(() -> new InternalError("Module not found: " + NAME));
-    }
-
     private DeviceModule() {
         // hidden
-    }
-
-    /**
-     * Get the device module.
-     *
-     * @return the device module
-     */
-    public static Module instance() {
-        return instance;
     }
 
     /**
@@ -62,6 +44,6 @@ public final class DeviceModule {
      * @return the logger
      */
     public static Logger logger(final String name) {
-        return org.slf4j.LoggerFactory.getLogger("%s.%s".formatted(NAME, name));
+        return LoggerFactory.getLogger("%s.%s".formatted(NAME, name));
     }
 }

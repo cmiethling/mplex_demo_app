@@ -9,8 +9,6 @@ import com.cmiethling.mplex.device.websocket.DeviceEventListener;
 import com.cmiethling.mplex.device.websocket.MyWebSocketListener;
 import com.cmiethling.mplex.device.websocket.WebSocketUtils;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -25,40 +23,39 @@ import static java.util.Objects.requireNonNull;
 /**
  * Implementation of the websocket client interface.
  */
-@Service
 public final class WebSocketServiceImpl implements WebSocketService {
 
     private static final Logger log = DeviceModule.logger();
 
-    private final ConcurrentMap<UUID, CommandTaskInfo<? extends DeviceCommand>> commandTasks =
-            new ConcurrentHashMap<>();
-    private final List<DeviceEventListener> deviceEventListeners = new CopyOnWriteArrayList<>();
-    private final String uri;
-    private WebSocket deviceWebSocket;
+    // beans
+    private final URI uri;
+    private final ConcurrentMap<UUID, CommandTaskInfo<? extends DeviceCommand>> commandTasks;
+    private final List<DeviceEventListener> deviceEventListeners;
+    private final MyWebSocketListener myWebSocketListener;
+    private final DeviceMessageService deviceMessageService;
+
+    private WebSocket webSocketClient;
     private ExecutorService executor = Executors.newCachedThreadPool();
 
-    @Autowired
-    private DeviceMessageService deviceMessageService;
-
-    /**
-     * Creates a new device interface with the specified URI.
-     *
-     * @param uri the URI to be used for connecting to the WebSocket (later on, when calling {@link #sendCommand} for
-     *            the first time)
-     */
-    public WebSocketServiceImpl(final String uri) {
+    public WebSocketServiceImpl(final URI uri,
+                                final ConcurrentMap<UUID, CommandTaskInfo<? extends DeviceCommand>> commandTasks,
+                                final List<DeviceEventListener> deviceEventListeners,
+                                final MyWebSocketListener myWebSocketListener,
+                                final DeviceMessageService deviceMessageService) {
         this.uri = uri;
+        this.commandTasks = commandTasks;
+        this.deviceEventListeners = deviceEventListeners;
+        this.myWebSocketListener = myWebSocketListener;
+        this.deviceMessageService = deviceMessageService;
     }
 
     // ########################## Device methods ##########################
-
     @Override
     public void openConnection() throws DeviceException {
-        final WebSocket.Listener listener = new MyWebSocketListener(this.deviceEventListeners, this.commandTasks);
         try (final var client = HttpClient.newHttpClient()) {
-            final var webSocket = client.newWebSocketBuilder().buildAsync(URI.create(this.uri), listener).get();
+            final var webSocket = client.newWebSocketBuilder().buildAsync(this.uri, this.myWebSocketListener).get();
             log.info("Device connection established");
-            this.deviceWebSocket = webSocket;
+            this.webSocketClient = webSocket;
         } catch (final ExecutionException ex) {// unwrap ExeExc
             throw new DeviceCommunicationException("connectionFailed", (Exception) ex.getCause());
         } catch (final InterruptedException ex) {
@@ -69,8 +66,8 @@ public final class WebSocketServiceImpl implements WebSocketService {
     @Override
     public Future<Boolean> sendClose() {
         this.executor.shutdownNow();
-        if (this.deviceWebSocket != null) {
-            return this.deviceWebSocket.sendClose(WebSocket.NORMAL_CLOSURE, "closed WebSocket connection")
+        if (this.webSocketClient != null) {
+            return this.webSocketClient.sendClose(WebSocket.NORMAL_CLOSURE, "closed WebSocket connection")
                     // ### use thenApplyAsync() as main thread could be used with thenApply()!### see:
                     // https://stackoverflow.com/questions/27723546/completablefuture-supplyasync-and-thenapply
                     .thenApplyAsync(ws -> Boolean.TRUE)// if no exception >> ws is closed properly
@@ -104,7 +101,7 @@ public final class WebSocketServiceImpl implements WebSocketService {
                 // send the text (can only be called one at a time!)
                 WebSocketUtils.logJsonMessage(WebSocketUtils.sendLogger, "Sending request to Device", json);
                 synchronized (this) {
-                    this.deviceWebSocket.sendText(json, true).get();
+                    this.webSocketClient.sendText(json, true).get();
                 }
                 WebSocketUtils.sendLogger.debug("Request sent.");
 
@@ -141,8 +138,8 @@ public final class WebSocketServiceImpl implements WebSocketService {
 
     @Override
     public synchronized void ensureConnected() throws DeviceException {
-        if (this.deviceWebSocket == null || this.deviceWebSocket.isOutputClosed()) {
-            log.info(this.deviceWebSocket == null ? "Device not connected yet, trying to connect to device..."
+        if (this.webSocketClient == null || this.webSocketClient.isOutputClosed()) {
+            log.info(this.webSocketClient == null ? "Device not connected yet, trying to connect to device..."
                     : "Device connection was closed, trying to reconnect to device...");
             openConnection();
         }

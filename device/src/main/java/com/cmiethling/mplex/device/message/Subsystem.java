@@ -6,21 +6,11 @@ import java.util.stream.Stream;
  * Defines the subsystems available in the hardware interface.
  */
 public enum Subsystem {
-
-    /**
-     * High voltage system control hv.
-     */
+    
     HIGH_VOLTAGE("highvoltage"),
-
-    /**
-     * Motors.
-     */
     MOTOR_CONTROL("motorcontrol"),
-
-    /**
-     * Fluidics control.
-     */
-    FLUIDICS("fluidics");
+    FLUIDICS("fluidics"),
+    TEST("test");
 
     private final String id;
 
