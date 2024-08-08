@@ -8,19 +8,19 @@ Author URL: http://w3layouts.com
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>Eazy School - Best Educational Institute for your Child</title>
     <!-- Google fonts -->
     <link href="//fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Template CSS Style link -->
-    <!--    <link rel="stylesheet" href="assets/css/style-starter.css">-->
+    <!--    <link rel="stylesheet" href="/assets/css/style-starter.css">-->
     <!--  // 95, ex23: @PathVariable: sonst kann css bei @PathVariables nicht richtig angezeigt werden!!! -->
-    <link rel="stylesheet" href="/assets/css/style-starter.css">
+    <link href="/assets/css/style-starter.css" rel="stylesheet">
 </head>
 
 <body>
 <!-- import header.html-->
-<div th:replace="~{header :: header}"></div>
+<div th:replace="~{template :: header}"></div>
 <!-- //import header.html-->
 
 <!-- inner banner: das große Courses  Home > Courses -->
@@ -48,7 +48,7 @@ Author URL: http://w3layouts.com
             <div class="col-lg-4 col-md-6">
                 <div class="coursecard-single">
                     <div class="grids5-info position-relative">
-                        <img src="assets/images/c1.jpg" alt="" class="img-fluid"/>
+                        <img alt="" class="img-fluid" src="/assets/images/c1.jpg" />
                         <div class="meta-list">
                             <a>Education</a>
                         </div>
@@ -69,7 +69,7 @@ Author URL: http://w3layouts.com
             <div class="col-lg-4 col-md-6 mt-md-0 mt-4">
                 <div class="coursecard-single">
                     <div class="grids5-info position-relative">
-                        <img src="assets/images/c2.jpg" alt="" class="img-fluid"/>
+                        <img alt="" class="img-fluid" src="/assets/images/c2.jpg" />
                         <div class="meta-list">
                             <a class="sec-2">Meditation</a>
                         </div>
@@ -90,7 +90,7 @@ Author URL: http://w3layouts.com
             <div class="col-lg-4 col-md-6 mt-lg-0 mt-4">
                 <div class="coursecard-single">
                     <div class="grids5-info position-relative">
-                        <img src="assets/images/c3.jpg" alt="" class="img-fluid"/>
+                        <img alt="" class="img-fluid" src="/assets/images/c3.jpg" />
                         <div class="meta-list">
                             <a class="sec-3">Games</a>
                         </div>
@@ -111,7 +111,7 @@ Author URL: http://w3layouts.com
             <div class="col-lg-4 col-md-6 mt-4">
                 <div class="coursecard-single">
                     <div class="grids5-info position-relative">
-                        <img src="assets/images/c4.jpg" alt="" class="img-fluid"/>
+                        <img alt="" class="img-fluid" src="/assets/images/c4.jpg" />
                         <div class="meta-list">
                             <a href="courses.html">Development</a>
                         </div>
@@ -131,7 +131,7 @@ Author URL: http://w3layouts.com
             <div class="col-lg-4 col-md-6 mt-4">
                 <div class="coursecard-single">
                     <div class="grids5-info position-relative">
-                        <img src="assets/images/c5.jpg" alt="" class="img-fluid"/>
+                        <img alt="" class="img-fluid" src="/assets/images/c5.jpg" />
                         <div class="meta-list">
                             <a class="sec-2">Audio & Music</a>
                         </div>
@@ -151,7 +151,7 @@ Author URL: http://w3layouts.com
             <div class="col-lg-4 col-md-6 mt-4">
                 <div class="coursecard-single">
                     <div class="grids5-info position-relative">
-                        <img src="assets/images/c6.jpg" alt="" class="img-fluid"/>
+                        <img alt="" class="img-fluid" src="/assets/images/c6.jpg" />
                         <div class="meta-list">
                             <a class="sec-3">Art & Design</a>
                         </div>
@@ -178,88 +178,10 @@ Author URL: http://w3layouts.com
 <div th:replace="~{footer :: footer}"></div>
 <!-- //import footer.html-->
 
-<!-- Js scripts -->
-<!-- move top -->
-<button onclick="topFunction()" id="movetop" title="Go to top">
-    <span class="fas fa-level-up-alt" aria-hidden="true"></span>
-</button>
-<script>
-    // When the user scrolls down 20px from the top of the document, show the button
-    window.onscroll = function () {
-        scrollFunction()
-    };
+<!-- import scripts.html-->
+<div th:replace="~{template :: scripts}"></div>
+<!-- //import scripts.html-->
 
-    function scrollFunction() {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            document.getElementById("movetop").style.display = "block";
-        } else {
-            document.getElementById("movetop").style.display = "none";
-        }
-    }
-
-    // When the user clicks on the button, scroll to the top of the document
-    function topFunction() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-    }
-</script>
-<!-- //move top -->
-
-<!-- common jquery plugin -->
-<script src="assets/js/jquery-3.3.1.min.js"></script>
-<!-- //common jquery plugin -->
-
-<!-- /counter-->
-<script src="assets/js/counter.js"></script>
-<!-- //counter-->
-
-<!-- theme switch js (light and dark)-->
-<script src="assets/js/theme-change.js"></script>
-<!-- //theme switch js (light and dark)-->
-
-<!-- MENU-JS -->
-<script>
-    $(window).on("scroll", function () {
-        var scroll = $(window).scrollTop();
-
-        if (scroll >= 80) {
-            $("#site-header").addClass("nav-fixed");
-        } else {
-            $("#site-header").removeClass("nav-fixed");
-        }
-    });
-
-    //Main navigation Active Class Add Remove
-    $(".navbar-toggler").on("click", function () {
-        $("header").toggleClass("active");
-    });
-    $(document).on("ready", function () {
-        if ($(window).width() > 991) {
-            $("header").removeClass("active");
-        }
-        $(window).on("resize", function () {
-            if ($(window).width() > 991) {
-                $("header").removeClass("active");
-            }
-        });
-    });
-</script>
-<!-- //MENU-JS -->
-
-<!-- disable body scroll which navbar is in active -->
-<script>
-    $(function () {
-        $('.navbar-toggler').click(function () {
-            $('body').toggleClass('noscroll');
-        })
-    });
-</script>
-<!-- //disable body scroll which navbar is in active -->
-
-<!-- bootstrap -->
-<script src="assets/js/bootstrap.min.js"></script>
-<!-- //bootstrap -->
-<!-- //Js scripts -->
 </body>
 
 </html>
