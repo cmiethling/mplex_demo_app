@@ -1,48 +1,46 @@
 var ws;
-function setConnected(connected) {
-	$("#connect").prop("disabled", connected);
-	$("#disconnect").prop("disabled", !connected);
-}
+
+//function setConnected(connected) {
+//    document.getElementById("connect").disabled = connected;
+//    document.getElementById("disconnect").disabled = !connected;
+//}
 
 function connect() {
-	ws = new WebSocket('ws://localhost:8091/hwAPI');
-	ws.onmessage = function(data) {
-		helloWorld(data.data);
-	}
-	setConnected(true);
+    ws = new WebSocket('ws://localhost:8091/hwAPI');
+
+    ws.onopen = function() {
+        console.log("WebSocket connected");
+        setConnected(true);
+    };
+
+    ws.onmessage = function(event) {
+        console.log("Received message: " + event.data);
+        // Sende die empfangene Nachricht zurück an den Server
+        ws.send(event.data);
+        // Zeige die Nachricht in der Webseite an
+        document.getElementById("messages").innerText += "Received and sent back: " + event.data + "\n";
+    };
+
+    ws.onclose = function(event) {
+    console.log("why disconnecting????????");
+    console.log(event);
+
+        console.log("WebSocket disconnected");
+        setConnected(false);
+    };
+
+    ws.onerror = function(error) {
+        console.log("WebSocket error: " + error.message);
+    };
 }
 
 function disconnect() {
-	if (ws != null) {
-		ws.close();
-	}
-	setConnected(false);
-	console.log("Websocket is in disconnected state");
+
+    if (ws != null) {
+        ws.close();
+    }
+    setConnected(false);
 }
 
-function sendData() {
-	var data = JSON.stringify({
-		'user' : $("#user").val(),
-		'user2' : $("#user2").val()
-	})
-	ws.send(data);
-}
-
-function helloWorld(message) {
-	$("#helloworldmessage").append(" " + message + "");
-}
-
-$(function() {
-	$("form").on('submit', function(e) {
-		e.preventDefault();
-	});
-	$("#connect").click(function() {
-		connect();
-	});
-	$("#disconnect").click(function() {
-		disconnect();
-	});
-	$("#send").click(function() {
-		sendData();
-	});
-});
+document.getElementById("connect").onclick = connect;
+document.getElementById("disconnect").onclick = disconnect;
