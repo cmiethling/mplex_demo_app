@@ -6,6 +6,7 @@ import com.cmiethling.mplex.device.service.WebSocketServiceImpl;
 import com.cmiethling.mplex.device.websocket.CommandTaskInfo;
 import com.cmiethling.mplex.device.websocket.DeviceEventListener;
 import com.cmiethling.mplex.device.websocket.MyWebSocketListener;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,14 +19,17 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Configuration
+@Slf4j
 public class WebSocketConfig {
+    private static final String INVALID_DEFAULT_VALUE = "someInvalidDefaultValue";
 
-    @Value("${websocket.uri}")
+    @Value("${websocket.uri:" + INVALID_DEFAULT_VALUE + "}")
     private String webSocketUri;
 
     @Bean("uri")
     public URI getWebSocketUri() {
-        System.out.println(this.webSocketUri);
+        if (INVALID_DEFAULT_VALUE.equals(this.webSocketUri))
+            log.info("######## no websocket uri >> no websocket client #############");
         return URI.create(this.webSocketUri);
     }
 

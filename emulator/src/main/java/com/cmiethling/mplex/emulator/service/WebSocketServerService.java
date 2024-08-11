@@ -1,8 +1,10 @@
 package com.cmiethling.mplex.emulator.service;
 
 import com.cmiethling.mplex.device.DeviceException;
-import com.cmiethling.mplex.device.message.EventMessage;
+import com.cmiethling.mplex.device.DeviceMessageException;
+import com.cmiethling.mplex.device.message.*;
 import com.cmiethling.mplex.device.service.DeviceMessageService;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,7 +19,7 @@ import java.io.IOException;
 @Component
 public class WebSocketServerService extends TextWebSocketHandler {
 
-    private static WebSocketSession session1;
+    private WebSocketSession session1;
 
     @Autowired
     private DeviceMessageService deviceMessageService;
@@ -27,48 +29,52 @@ public class WebSocketServerService extends TextWebSocketHandler {
      *
      * @param eventMessage the message to send
      */
-    public void broadcastEvent(final EventMessage eventMessage) throws IOException, DeviceException {
-        if (session1 != null && session1.isOpen()) {
-            final var json = this.deviceMessageService.serializeMessage(eventMessage);
-            log.info("Sending Event: " + json);
-            session1.sendMessage(new TextMessage(json));
-            log.info("Event sent");
-        }
+    public void broadcastEvent(@NonNull final EventMessage eventMessage) throws IOException, DeviceException {
+        if (this.session1 != null && this.session1.isOpen()) {
+            sendMessage(eventMessage);
+        } else
+            log.info("could send event. Session: " + this.session1);
     }
 
     @Override
-    public void handleTextMessage(final WebSocketSession session, final TextMessage message)
-            throws DeviceException {
+    public void handleTextMessage(@NonNull final WebSocketSession session, @NonNull final TextMessage message)
+            throws DeviceException, IOException {
 
         final String json = message.getPayload();
-        // final var deviceMessage = this.deviceMessageService.deserializeMessage(json);
-        System.out.println("Raw message: " + message);
-        System.out.println("json: " + json);
-        // System.out.println("DeviceMessage: " + deviceMessage);
-        // switch (deviceMessage) {
-        //     case final RequestMessage r -> System.out.println("request: " + r);
-        //     case final EventMessage e -> System.out.println("event: " + e);
-        //     default -> throw new IllegalStateException("Unexpected value: " + deviceMessage);
-        // }
+        log.info("received: " + json);
+
+        final var deviceMessage = this.deviceMessageService.deserializeMessage(json);
+        switch (deviceMessage) {
+            case final RequestMessage r -> {
+                final var result = new ResultMessage(r.getId(), r.getSubsystem(), r.getTopic());
+                result.setError(ResultError.NONE);
+                sendMessage(result);
+            }
+            case final EventMessage e -> System.out.println("event: " + e);
+            default -> throw new IllegalStateException("Unexpected value: " + deviceMessage);
+        }
         // // can only be request message
         // final var request = deviceMessage.asRequest();
     }
 
-    //    ############# open close #################
-
     @Override
-    public void afterConnectionEstablished(final WebSocketSession session) throws Exception {
-        if (session1 != null) throw new IllegalStateException("session was already established");
-        session1 = session;
+    public void afterConnectionEstablished(@NonNull final WebSocketSession session) throws Exception {
+        if (this.session1 != null) throw new IllegalStateException("session was already established");
+        this.session1 = session;
         log.info("Emulator Session opened: " + session.getId());
-        session1.sendMessage(new TextMessage("from server"));
         super.afterConnectionEstablished(session);
     }
 
     @Override
-    public void afterConnectionClosed(final WebSocketSession session, final CloseStatus status) throws Exception {
-        session1 = null;
+    public void afterConnectionClosed(@NonNull final WebSocketSession session, @NonNull final CloseStatus status) throws Exception {
+        this.session1 = null;
         log.info(String.format("Emulator Session closed: %s with %s", session.getId(), status));
         super.afterConnectionClosed(session, status);
+    }
+
+    private void sendMessage(@NonNull final DeviceMessage eventMessage) throws DeviceMessageException, IOException {
+        final var json = this.deviceMessageService.serializeMessage(eventMessage);
+        this.session1.sendMessage(new TextMessage(json));
+        log.info("Message sent: " + json);
     }
 }

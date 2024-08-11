@@ -1,14 +1,13 @@
-package com.cmiethling.mplex.emulator;
+package com.cmiethling.mplex.client;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-// TODO utils modul
-@ComponentScan(basePackages = {"com.cmiethling.mplex.device", "com.cmiethling.mplex.emulator"})
-public class EmulatorApp {
+@ComponentScan(basePackages = {"com.cmiethling.mplex.device", "com.cmiethling.mplex.client"})
+public class ClientApp {
     public static void main(final String[] args) {
-        SpringApplication.run(EmulatorApp.class, args);
+        SpringApplication.run(ClientApp.class, args);
     }
 }

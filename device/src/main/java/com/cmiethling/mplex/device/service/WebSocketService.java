@@ -9,7 +9,6 @@ import com.cmiethling.mplex.device.message.RequestMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
 import com.cmiethling.mplex.device.websocket.DeviceEventListener;
 
-import java.time.Duration;
 import java.util.concurrent.Future;
 
 /**
@@ -44,17 +43,16 @@ public interface WebSocketService {
      * ExecutionException. If there is a problem with the WebSocket connection >> {@link DeviceException}. If there is a
      * problem evaluating the result message >> {@link DeviceMessageException}.
      *
-     * @param <T>      the type of the device command
-     * @param command  CommandMessage wrapped as a DeviceCommand to be send to hardware
-     * @param duration how long to wait before completing exceptionally with a TimeoutException
+     * @param <T>     the type of the device command
+     * @param command CommandMessage wrapped as a DeviceCommand to be send to hardware
      * @return The ResultMessage wrapped as a DeviceCommand or a wrapped Exception
      * @throws DeviceException if the command cannot be sent
      */
-    <T extends DeviceCommand> Future<T> sendCommand(T command, Duration duration) throws DeviceException;
+    <T extends DeviceCommand> Future<T> sendCommand(T command) throws DeviceException;
 
     /**
      * Cancel all pending commands. This will produce {@link InterruptedException}s in all {@link Future}s returned by
-     * {@link #sendCommand(DeviceCommand, Duration)}.
+     * {@link #sendCommand(DeviceCommand)}.
      */
     void cancelAllCommands();
 

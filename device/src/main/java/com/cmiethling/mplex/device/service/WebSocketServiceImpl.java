@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
-import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -52,10 +51,13 @@ public final class WebSocketServiceImpl implements WebSocketService {
     // ########################## Device methods ##########################
     @Override
     public void openConnection() throws DeviceException {
-        try (final var client = HttpClient.newHttpClient()) {
-            final var webSocket = client.newWebSocketBuilder().buildAsync(this.uri, this.myWebSocketListener).get();
-            this.log.info("Device connection established");
-            this.webSocketClient = webSocket;
+        // FIXME remove later
+        if (this.executor.isShutdown()) // can't happen after closing app :)
+            this.executor = Executors.newCachedThreadPool();
+        try {
+            final var builder = HttpClient.newHttpClient().newWebSocketBuilder();
+            this.webSocketClient = builder.buildAsync(this.uri, this.myWebSocketListener).get();
+            this.log.info("Device connection established: " + this.webSocketClient);
         } catch (final ExecutionException ex) {// unwrap ExeExc
             throw new DeviceCommunicationException("connectionFailed", (Exception) ex.getCause());
         } catch (final InterruptedException ex) {
@@ -80,7 +82,7 @@ public final class WebSocketServiceImpl implements WebSocketService {
     }
 
     @Override
-    public <T extends DeviceCommand> Future<T> sendCommand(final T command, final Duration duration) throws DeviceException {
+    public <T extends DeviceCommand> Future<T> sendCommand(final T command) throws DeviceException {
 
         // before we create a task for sending the message we need to perform same preparations
         // get the message to send and the id for reference
@@ -108,8 +110,8 @@ public final class WebSocketServiceImpl implements WebSocketService {
                 final var taskInfo = this.commandTasks.get(messageId);
                 if (taskInfo == null)
                     throw new IllegalStateException("CommandTaskInfo must be put in map BEFORE it is started");
-                // wait for the result
-                if (!taskInfo.waitForResult(TimeUnit.MILLISECONDS.convert(duration), TimeUnit.MILLISECONDS))
+                // wait 3s for the result
+                if (!taskInfo.waitForResult(3, TimeUnit.SECONDS))
                     throw new TimeoutException();
 
                 // get the result
@@ -152,14 +154,5 @@ public final class WebSocketServiceImpl implements WebSocketService {
 
     @Override
     public void removeDeviceEventListener(final DeviceEventListener l) {this.deviceEventListeners.remove(l);}
-
-    // #########################################
-
-    /**
-     * For test purposes only.
-     *
-     * @return the map with the waiting command tasks
-     */
-    ConcurrentMap<UUID, CommandTaskInfo<?>> getCommandTasks() {return this.commandTasks;}
 }
 

@@ -65,17 +65,6 @@ Author URL: http://w3layouts.com
 </section>
 <!-- //content -->
 
-<section>
-    <div class="container">
-        <h1>WebSocket Echo Client</h1>
-        <button id="connect">Connect</button>
-        <button id="disconnect">Disconnect</button>
-        <div id="messages"></div>
-
-        <script src="/assets/js/app.js"></script>
-    </div>
-</section>
-
 <section class="services-w3l-block py-5">
     <div class="container">
         <h1>WebSocket Test</h1>
@@ -86,21 +75,6 @@ Author URL: http://w3layouts.com
         </form>
     </div>
 </section>
-
-<script>
-    document.getElementById("postButton").onclick = function() {
-        var data = document.getElementById("postData").value;
-        fetch('http://localhost:8091/api/post', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ data: data })
-        }).then(response => response.json())
-          .then(result => console.log(result))
-          .catch(error => console.error('Error:', error));
-    };
-</script>
 
 <!-- import scripts.html-->
 <div th:replace="~{template :: scripts}"></div>
