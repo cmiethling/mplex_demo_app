@@ -3,7 +3,9 @@ package com.cmiethling.mplex.client.core;
 import com.cmiethling.mplex.device.DeviceException;
 import com.cmiethling.mplex.device.api.DeviceCommand;
 import com.cmiethling.mplex.device.service.EventCommandFactory;
-import com.cmiethling.mplex.device.service.WebSocketServiceImpl;
+import com.cmiethling.mplex.device.service.WebSocketService;
+import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,19 +13,25 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+@Slf4j
 @Component
 public class DeviceCorePart {
-    @Autowired
-    private final WebSocketServiceImpl webSocketService;
-    @Autowired
-    private final EventCommandFactory eventCommandFactory;
 
-    public DeviceCorePart(final WebSocketServiceImpl webSocketService, final EventCommandFactory eventCommandFactory) throws DeviceException {
-        this.webSocketService = webSocketService;
-        this.eventCommandFactory = eventCommandFactory;
-        // this.webSocketService.openConnection();
+    @Autowired
+    private WebSocketService webSocketService;
+
+    @Autowired
+    private EventCommandFactory eventCommandFactory;
+
+    // @PostConstruct
+    // public void init() throws DeviceException {
+    //     openConnection();
+    // }
+
+    @PreDestroy
+    public void cleanup() throws ExecutionException, InterruptedException, TimeoutException {
+        closeConnection();
     }
-    // TODO: init(), stop() rein (irgendwie mit Clientapp verknüpfen...)
 
     public <T extends DeviceCommand> T sendCommand(final T command) throws DeviceException, ExecutionException,
             InterruptedException {
@@ -40,6 +48,6 @@ public class DeviceCorePart {
 
     public boolean closeConnection() throws ExecutionException, InterruptedException,
             TimeoutException {
-        return this.webSocketService.sendClose().get(500, TimeUnit.MILLISECONDS);
+        return this.webSocketService.sendClose().get(1, TimeUnit.SECONDS);
     }
 }

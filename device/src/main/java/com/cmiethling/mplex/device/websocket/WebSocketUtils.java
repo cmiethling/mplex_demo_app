@@ -14,11 +14,6 @@ import java.util.function.Supplier;
 @Configuration
 public class WebSocketUtils {
     /**
-     * Name of the logger for sent raw messages.
-     */
-    private static final String SEND_LOGGER_NAME = "device.send";
-    public static final Logger sendLogger = DeviceModule.logger(SEND_LOGGER_NAME);
-    /**
      * Name of the logger for received raw messages.
      */
     private static final String RECEIVE_LOGGER_NAME = "device.receive";

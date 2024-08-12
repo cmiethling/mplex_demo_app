@@ -5,15 +5,12 @@ import com.cmiethling.mplex.device.DeviceException;
 import com.cmiethling.mplex.device.DeviceModule;
 import com.cmiethling.mplex.device.api.DeviceCommand;
 import com.cmiethling.mplex.device.websocket.CommandTaskInfo;
-import com.cmiethling.mplex.device.websocket.DeviceEventListener;
 import com.cmiethling.mplex.device.websocket.MyWebSocketListener;
-import com.cmiethling.mplex.device.websocket.WebSocketUtils;
 import org.slf4j.Logger;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -29,23 +26,20 @@ public final class WebSocketServiceImpl implements WebSocketService {
     // beans
     private final URI uri;
     private final ConcurrentMap<UUID, CommandTaskInfo<? extends DeviceCommand>> commandTasks;
-    private final List<DeviceEventListener> deviceEventListeners;
-    private final MyWebSocketListener myWebSocketListener;
     private final DeviceMessageService deviceMessageService;
+    private final MyWebSocketListener myWebSocketListener;
 
     private WebSocket webSocketClient;
     private ExecutorService executor = Executors.newCachedThreadPool();
 
     public WebSocketServiceImpl(final URI uri,
                                 final ConcurrentMap<UUID, CommandTaskInfo<? extends DeviceCommand>> commandTasks,
-                                final List<DeviceEventListener> deviceEventListeners,
-                                final MyWebSocketListener myWebSocketListener,
-                                final DeviceMessageService deviceMessageService) {
+                                final DeviceMessageService deviceMessageService,
+                                final MyWebSocketListener myWebSocketListener) {
         this.uri = uri;
         this.commandTasks = commandTasks;
-        this.deviceEventListeners = deviceEventListeners;
-        this.myWebSocketListener = myWebSocketListener;
         this.deviceMessageService = deviceMessageService;
+        this.myWebSocketListener = myWebSocketListener;
     }
 
     // ########################## Device methods ##########################
@@ -97,15 +91,10 @@ public final class WebSocketServiceImpl implements WebSocketService {
                 // convert the message to JSON
                 final var json = this.deviceMessageService.serializeMessage(requestMessage);
 
-                // log the request with a request-specific logger
-                WebSocketUtils.logMessage(requestMessage);
-
-                // send the text (can only be called one at a time!)
-                WebSocketUtils.logJsonMessage(WebSocketUtils.sendLogger, "Sending request to Device", json);
                 synchronized (this) {
                     this.webSocketClient.sendText(json, true).get();
                 }
-                WebSocketUtils.sendLogger.debug("Request sent.");
+                this.log.info("sent {}", requestMessage);
 
                 final var taskInfo = this.commandTasks.get(messageId);
                 if (taskInfo == null)
@@ -119,6 +108,7 @@ public final class WebSocketServiceImpl implements WebSocketService {
 
                 // set the result to the command and return it
                 command.fromResultMessage(resultMessage);
+                this.log.info("received {}", resultMessage);
                 return command;
             } finally {
                 // make sure we unregister the task
@@ -148,11 +138,5 @@ public final class WebSocketServiceImpl implements WebSocketService {
         if (this.executor.isShutdown()) // for testing {@code sendClose()} only, can't happen after closing app :)
             this.executor = Executors.newCachedThreadPool();
     }
-
-    @Override
-    public void addDeviceEventListener(final DeviceEventListener l) {this.deviceEventListeners.add(l);}
-
-    @Override
-    public void removeDeviceEventListener(final DeviceEventListener l) {this.deviceEventListeners.remove(l);}
 }
 

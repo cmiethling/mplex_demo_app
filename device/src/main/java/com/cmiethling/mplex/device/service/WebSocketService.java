@@ -7,7 +7,7 @@ import com.cmiethling.mplex.device.api.DeviceEvent;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.RequestMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
-import com.cmiethling.mplex.device.websocket.DeviceEventListener;
+import com.cmiethling.mplex.device.websocket.DeviceEventWrapper;
 
 import java.util.concurrent.Future;
 
@@ -16,25 +16,11 @@ import java.util.concurrent.Future;
  * <ul>
  * <li>It sends a {@link RequestMessage} (wrapped as {@link DeviceCommand}) to the (simulated) hardware and it waits for
  * a {@link ResultMessage} (again wrapped as {@link DeviceCommand}).</li>
- * <li>The {@link DeviceEventListener} will receive independent events from the hardware as {@link EventMessage
- * EventMessages} (wrapped as {@link DeviceEvent DeviceEvents}).</li>
+ * <li>Independent events from the hardware will be sent as {@link EventMessage
+ * EventMessages} (wrapped as {@link DeviceEvent DeviceEvents} and {@link DeviceEventWrapper DeviceEventWrapper}).</li>
  * </ul>
  */
 public interface WebSocketService {
-
-    /**
-     * Registers a new listener to this device.
-     *
-     * @param l the new listener
-     */
-    void addDeviceEventListener(DeviceEventListener l);
-
-    /**
-     * Removes a registered listener from the device.
-     *
-     * @param l the new listener
-     */
-    void removeDeviceEventListener(DeviceEventListener l);
 
     /**
      * The application sends a {@link RequestMessage} wrapped as a {@link DeviceCommand} to the hardware (either

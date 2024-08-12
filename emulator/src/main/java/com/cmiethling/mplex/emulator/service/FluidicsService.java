@@ -35,6 +35,8 @@ public class FluidicsService extends AbstractSubsystem {
     }
 
     public void sendErrorEvent(final FluidicsError error) throws IOException, DeviceException {
-        sendEventMessage(createEventMessage(ErrorsEvent.TOPIC));
+        final var event = createEventMessage(ErrorsEvent.TOPIC);
+        event.parameters().putInt(ErrorsEvent.ERRORCODE, error.code());
+        sendEventMessage(event);
     }
 }

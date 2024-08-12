@@ -14,7 +14,7 @@ public abstract class AbstractSubsystem {
     private final Subsystem subsystem;
 
     @Autowired
-    private DeviceCorePart deviceCorePart;
+    protected DeviceCorePart deviceCorePart;
 
     protected AbstractSubsystem(@NonNull final Subsystem subsystem) {
         this.subsystem = subsystem;

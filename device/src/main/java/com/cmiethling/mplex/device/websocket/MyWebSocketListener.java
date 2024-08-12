@@ -9,9 +9,9 @@ import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
 import com.cmiethling.mplex.device.service.DeviceMessageService;
 import org.slf4j.Logger;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.net.http.WebSocket;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -21,23 +21,23 @@ import java.util.concurrent.ConcurrentMap;
 public class MyWebSocketListener implements WebSocket.Listener {
 
     private final Logger log = DeviceModule.logger();
-    // beans
+
     private final DeviceMessageService deviceMessageService;
-    private final List<DeviceEventListener> deviceEventListeners;
     private final ConcurrentMap<UUID, CommandTaskInfo<? extends DeviceCommand>> commandTasks;
+    private final ApplicationEventPublisher eventPublisher;
+
     private final StringBuilder textData = new StringBuilder();
 
-    public MyWebSocketListener(final List<DeviceEventListener> deviceEventListeners, final ConcurrentMap<UUID,
-            CommandTaskInfo<? extends DeviceCommand>> commandTasks, final DeviceMessageService deviceMessageService) {
-        this.deviceEventListeners = deviceEventListeners;
+    public MyWebSocketListener(final ConcurrentMap<UUID,
+            CommandTaskInfo<? extends DeviceCommand>> commandTasks, final DeviceMessageService deviceMessageService,
+                               final ApplicationEventPublisher eventPublisher) {
         this.commandTasks = commandTasks;
         this.deviceMessageService = deviceMessageService;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
-     * The application receives a {@link ResultMessage} or {@link EventMessage} from the hardware (via the
-     * {@link java.net.http.WebSocket.Listener WebSocket.Listener}) and informs all {@link DeviceEventListener
-     * DeviceListeners}.
+     * The application receives a {@link ResultMessage} or an {@link EventMessage} from the hardware.
      * <p>
      * Note that {@code onText()} itself is synchronous so it can only be called one at a time, but the returned
      * CompletionStage (=CompletableFuture) is asynchronous so one has to differentiate
@@ -100,7 +100,7 @@ public class MyWebSocketListener implements WebSocket.Listener {
             final var event = DeviceEvent.of(eventMessage.getSubsystem(), eventMessage.getTopic());
             event.fromEventMessage(eventMessage);
 
-            this.deviceEventListeners.forEach(listener -> listener.onEvent(event));
+            this.eventPublisher.publishEvent(new DeviceEventWrapper<>(this, event));
         } else {
             throw new DeviceMessageException("invalidMessageType: " + message);
         }
@@ -117,11 +117,4 @@ public class MyWebSocketListener implements WebSocket.Listener {
     public void onError(final WebSocket webSocket, final Throwable error) {
         this.log.error("Device connection error: ", error);
     }
-
-    /**
-     * For test purposes only.
-     *
-     * @return the map with the waiting command tasks
-     */
-    ConcurrentMap<UUID, CommandTaskInfo<?>> getCommandTasks() {return this.commandTasks;}
 }
