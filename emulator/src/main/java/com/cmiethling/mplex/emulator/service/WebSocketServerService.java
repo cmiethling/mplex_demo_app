@@ -29,11 +29,20 @@ public class WebSocketServerService extends TextWebSocketHandler {
      *
      * @param eventMessage the message to send
      */
-    public void broadcastEvent(@NonNull final EventMessage eventMessage) throws IOException, DeviceException {
+    public boolean broadcastEvent(@NonNull final EventMessage eventMessage) throws IOException, DeviceException {
         if (this.session1 != null && this.session1.isOpen()) {
             sendMessage(eventMessage);
-        } else
-            log.info("could send event. Session: " + this.session1);
+            return true;
+        } else {
+            log.info("could not send event. Session: " + this.session1);
+            return false;
+        }
+    }
+
+    private void sendMessage(@NonNull final DeviceMessage eventMessage) throws DeviceMessageException, IOException {
+        final var json = this.deviceMessageService.serializeMessage(eventMessage);
+        this.session1.sendMessage(new TextMessage(json));
+        log.info("Message sent: " + json);
     }
 
     @Override
@@ -70,11 +79,5 @@ public class WebSocketServerService extends TextWebSocketHandler {
         this.session1 = null;
         log.info(String.format("Emulator Session closed: %s with %s", session.getId(), status));
         super.afterConnectionClosed(session, status);
-    }
-
-    private void sendMessage(@NonNull final DeviceMessage eventMessage) throws DeviceMessageException, IOException {
-        final var json = this.deviceMessageService.serializeMessage(eventMessage);
-        this.session1.sendMessage(new TextMessage(json));
-        log.info("Message sent: " + json);
     }
 }

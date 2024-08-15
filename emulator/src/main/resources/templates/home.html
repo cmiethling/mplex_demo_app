@@ -21,8 +21,6 @@ Author URL: http://w3layouts.com
 <div th:replace="~{template :: header}"></div>
 <!-- //import header.html-->
 
-<!--<section id="websocket" th:replace="~{websocket :: div}"></section>-->
-
 <!-- content -->
 <section class="services-w3l-block py-5">
     <div class="container">
@@ -65,19 +63,8 @@ Author URL: http://w3layouts.com
 </section>
 <!-- //content -->
 
-<section class="services-w3l-block py-5">
-    <div class="container">
-        <h1>WebSocket Test</h1>
-        <form action="/test" method="post">
-            <input name="bla" placeholder="Enter your message" type="text">
-            <button id="postButton">Send Message</button>
-
-        </form>
-    </div>
-</section>
-
 <!-- import scripts.html-->
-<div th:replace="~{template :: scripts}"></div>
+<div th:replace="~{template :: footer_and_scripts}"></div>
 <!-- //import scripts.html-->
 
 </body>

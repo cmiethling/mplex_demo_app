@@ -17,14 +17,13 @@
                 <ul class="navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll">
                     <!-- 120, ex29: show when not authenticated-->
                     <li class="nav-item" sec:authorize="isAnonymous()">
-                        <!-- th: wenn man auf "home" oben rechts klickt kommt man wieder zu /home           -->
                         <a aria-current="page" class="nav-link" th:href="@{/home}">Home</a>
                     </li>
                     <li class="nav-item" sec:authorize="isAnonymous()">
-                        <a class="nav-link" th:href="@{/courses}">Courses</a>
+                        <a class="nav-link" th:href="@{/contact}">Contact</a>
                     </li>
                     <li class="nav-item" sec:authorize="isAnonymous()">
-                        <a class="nav-link" th:href="@{/contact}">Contact</a>
+                        <a class="nav-link" th:href="@{/logs}">Logs</a>
                     </li>
                     <!-- 118, ex29: login funktionalität -->
                     <li class="nav-item" sec:authorize="isAnonymous()">
@@ -40,21 +39,6 @@
                     </li>
                 </ul>
             </div>
-            <!-- toggle switch for light and dark theme -->
-            <div class="cont-ser-position">
-                <nav class="navigation">
-                    <div class="theme-switch-wrapper">
-                        <label class="theme-switch" for="checkbox">
-                            <input id="checkbox" type="checkbox">
-                            <div class="mode-container">
-                                <i class="gg-sun"></i>
-                                <i class="gg-moon"></i>
-                            </div>
-                        </label>
-                    </div>
-                </nav>
-            </div>
-            <!-- //toggle switch for light and dark theme -->
         </nav>
     </div>
 </header>
@@ -116,8 +100,10 @@
 </footer>
 <!--// footer block -->
 
-<!-- fragment for scripts -->
-<div th:fragment="scripts">
+<!-- fragment for footer and scripts -->
+<div th:fragment="footer_and_scripts">
+
+
     <!-- Js scripts -->
     <!-- move top -->
     <button id="movetop" onclick="topFunction()" title="Go to top">
@@ -148,10 +134,6 @@
     <!-- common jquery plugin -->
     <script src="/assets/js/jquery-3.3.1.min.js"></script>
     <!-- //common jquery plugin -->
-
-    <!-- theme switch js (light and dark)-->
-    <script src="/assets/js/theme-change.js"></script>
-    <!-- //theme switch js (light and dark)-->
 
     <!-- MENU-JS -->
     <script>

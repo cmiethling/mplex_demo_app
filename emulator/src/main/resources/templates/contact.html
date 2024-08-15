@@ -21,7 +21,7 @@ Author URL: http://w3layouts.com
 <body>
 
 <!-- header -->
-<div th:replace="~{header :: header}">...</div>
+<div th:replace="~{template :: header}">...</div>
 <!-- //header -->
 
 <!-- inner banner -->
@@ -62,7 +62,8 @@ Author URL: http://w3layouts.com
                                 <!--  95, ex23: @PathVariable (th:value >> kann wegen th:field nicht mehr benutzt werden (macht aber keine fehler)
                                 >> th:field ist sowieso besser, weil nur ein object Contact übertragen wird-->
                                 <!-- 2) 99, ex24: Bean validation: th:field; link between backend bean (pojo Contact) and frontend form) -->
-                                <input class="contact-input" placeholder="Your Name" th:field="*{name}" th:value="${name2}"
+                                <input class="contact-input" placeholder="Your Name" th:field="*{name}"
+                                       th:value="${name2}"
                                        type="text" />
                             </div>
                             <div class="col-sm-6">
@@ -135,92 +136,15 @@ Author URL: http://w3layouts.com
 <div class="map">
     <iframe
             allowfullscreen=""
-            frameborder="0" height="400" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.15830921454!2d-74.11976369744556!3d40.69766374856529!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sin!4v1639587930884!5m2!1sen!2sin" style="border: 0px;" width="100%"></iframe>
+            frameborder="0" height="400"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.15830921454!2d-74.11976369744556!3d40.69766374856529!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sin!4v1639587930884!5m2!1sen!2sin"
+            style="border: 0px;" width="100%"></iframe>
 </div>
 <!-- //contact block -->
 
 <!-- footer block -->
-<div th:replace="~{footer :: footer}">...</div>
+<div th:replace="~{template :: footer_and_scripts}">...</div>
 <!-- //footer block -->
-
-<!-- Js scripts -->
-<!-- move top -->
-<button id="movetop" onclick="topFunction()" title="Go to top">
-    <span aria-hidden="true" class="fas fa-level-up-alt"></span>
-</button>
-<script>
-    // When the user scrolls down 20px from the top of the document, show the button
-    window.onscroll = function () {
-        scrollFunction()
-    };
-
-    function scrollFunction() {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            document.getElementById("movetop").style.display = "block";
-        } else {
-            document.getElementById("movetop").style.display = "none";
-        }
-    }
-
-    // When the user clicks on the button, scroll to the top of the document
-    function topFunction() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-    }
-</script>
-<!-- //move top -->
-
-<!-- common jquery plugin -->
-<script src="assets/js/jquery-3.3.1.min.js"></script>
-<!-- //common jquery plugin -->
-
-<!-- theme switch js (light and dark)-->
-<script src="assets/js/theme-change.js"></script>
-<!-- //theme switch js (light and dark)-->
-
-<!-- MENU-JS -->
-<script>
-    $(window).on("scroll", function () {
-        var scroll = $(window).scrollTop();
-
-        if (scroll >= 80) {
-            $("#site-header").addClass("nav-fixed");
-        } else {
-            $("#site-header").removeClass("nav-fixed");
-        }
-    });
-
-    //Main navigation Active Class Add Remove
-    $(".navbar-toggler").on("click", function () {
-        $("header").toggleClass("active");
-    });
-    $(document).on("ready", function () {
-        if ($(window).width() > 991) {
-            $("header").removeClass("active");
-        }
-        $(window).on("resize", function () {
-            if ($(window).width() > 991) {
-                $("header").removeClass("active");
-            }
-        });
-    });
-</script>
-<!-- //MENU-JS -->
-
-<!-- disable body scroll which navbar is in active -->
-<script>
-    $(function () {
-        $('.navbar-toggler').click(function () {
-            $('body').toggleClass('noscroll');
-        })
-    });
-</script>
-<!-- //disable body scroll which navbar is in active -->
-
-<!-- bootstrap -->
-<script src="assets/js/bootstrap.min.js"></script>
-<!-- //bootstrap -->
-<!-- //Js scripts -->
 </body>
 
 </html>

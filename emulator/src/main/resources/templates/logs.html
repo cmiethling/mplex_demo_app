@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Log Viewer</title>
+    <!-- Google fonts -->
+    <link href="//fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+    <!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+    <link href="/assets/css/style-starter.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{template :: header}"></div>
+
+<section class="services-w3l-block py-5">
+    <div class="container">
+        <h1>Event Logs</h1>
+        <table border="5">
+            <tr>
+                <th>Timestamp</th>
+                <th>Type</th>
+                <th>Subsystem</th>
+                <th>Topic</th>
+            </tr>
+            <!--suppress HtmlUnknownTag, HtmlUnknownAttribute -->
+            <tr th:each="eventMessage : ${eventMessages}"
+                th:data-event="${eventMessage.getEvent()}"
+                th:data-subsystem="${eventMessage.subsystem}"
+                th:data-timestamp="${eventMessage.timestamp}"
+                th:data-topic="${eventMessage.topic}"
+                th:onclick="showEventDetails(this)">
+                <td th:text="${eventMessage.thymeleafTimestamp}">Timestamp</td>
+                <td>Event</td>
+                <td th:text="${eventMessage.subsystem}">Subsystem</td>
+                <td th:text="${eventMessage.topic}">Topic</td>
+            </tr>
+        </table>
+
+        <!-- Modal für Event-Details -->
+        <div id="eventDetailsModal" style="display:none; border: 1px solid black; padding: 10px;">
+            <h2>Message</h2>
+            <p id="eventDetails"></p>
+            <button onclick="closeModal()">Close</button>
+        </div>
+
+        <script>
+            function showEventDetails(row) {
+                const event = row.getAttribute("data-event");
+                const timestamp = new Date(row.getAttribute("data-timestamp"));
+                const options = {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    fractionalSecondDigits: 2 // millis
+                };
+                const formattedTimestamp = timestamp.toLocaleString('de-DE', options);
+
+                const topic = row.getAttribute("data-topic");
+                const subsystem = row.getAttribute("data-subsystem");
+                const json = JSON.stringify({ subsystem, topic }, null, 2);
+                const message = `${formattedTimestamp}: ${event}`;
+
+                document.getElementById("eventDetails").innerText = message;
+                document.getElementById("eventDetailsModal").style.display = "block";
+            }
+
+            function closeModal() {
+                document.getElementById("eventDetailsModal").style.display = "none";
+            }
+        </script>
+    </div>
+
+</section>
+
+</body>
+</html>
