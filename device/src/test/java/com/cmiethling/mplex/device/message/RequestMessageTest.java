@@ -97,12 +97,9 @@ public final class RequestMessageTest {
                 }""";
 
         final var message = this.deviceMessageService.deserializeMessage(json);
-        assertTrue(message.isRequest());
-        assertFalse(message.isResult());
-        assertFalse(message.isEvent());
-
-        final var request = message.asRequest();
+        final var request = assertInstanceOf(RequestMessage.class, message);
         // System.out.println(request);
+
         assertNotNull(request);
         assertEquals(ANY_UUID, request.getId());
         assertEquals(Subsystem.MOTOR_CONTROL, request.getSubsystem());
@@ -151,7 +148,7 @@ public final class RequestMessageTest {
     @MethodSource("invalidJson")
     public void fromInvalidJson(final String json) {
         assertThrows(DeviceMessageException.class,
-                () -> this.deviceMessageService.deserializeMessage(json).asRequest());
+                () -> this.deviceMessageService.deserializeMessage(json));
     }
 
     @Test

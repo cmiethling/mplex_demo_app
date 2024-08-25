@@ -34,6 +34,7 @@ public class WebSocketServerService extends TextWebSocketHandler {
             sendMessage(eventMessage);
             return true;
         } else {
+            // TODO improve logging
             log.info("could not send event. Session: " + this.session1);
             return false;
         }
@@ -54,16 +55,13 @@ public class WebSocketServerService extends TextWebSocketHandler {
 
         final var deviceMessage = this.deviceMessageService.deserializeMessage(json);
         switch (deviceMessage) {
-            case final RequestMessage r -> {
-                final var result = new ResultMessage(r.getId(), r.getSubsystem(), r.getTopic());
+            case final RequestMessage request -> {
+                final var result = new ResultMessage(request.getId(), request.getSubsystem(), request.getTopic());
                 result.setError(ResultError.NONE);
                 sendMessage(result);
             }
-            case final EventMessage e -> System.out.println("event: " + e);
             default -> throw new IllegalStateException("Unexpected value: " + deviceMessage);
         }
-        // // can only be request message
-        // final var request = deviceMessage.asRequest();
     }
 
     @Override

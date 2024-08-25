@@ -78,31 +78,30 @@ public class MyWebSocketListener implements WebSocket.Listener {
     }
 
     void computeReceivedMessage(final DeviceMessage message) throws DeviceMessageException {
-        if (message.isResult()) {
-            final var resultMessage = message.asResult();
-            // log the result with a result-specific logger
-            WebSocketUtils.logMessage(resultMessage);
+        switch (message) {
+            case final ResultMessage result -> {
+                // log the result with a result-specific logger
+                WebSocketUtils.logMessage(result);
 
-            // find a waiting task by the id
-            final var messageId = resultMessage.getId();
-            final var taskInfo = this.commandTasks.get(messageId);
-            if (taskInfo != null) {
-                // provide the message to the task
-                taskInfo.setResultMessage(resultMessage);
-            } else
-                WebSocketUtils.receiveLogger.warn("Unexpected result message, id: {}", messageId);
-        } else if (message.isEvent()) {
-            final var eventMessage = message.asEvent(); // outside ComFut because of checkedExc
+                // find a waiting task by the id
+                final var messageId = result.getId();
+                final var taskInfo = this.commandTasks.get(messageId);
+                if (taskInfo != null) {
+                    // provide the message to the task
+                    taskInfo.setResultMessage(result);
+                } else
+                    WebSocketUtils.receiveLogger.warn("Unexpected result message, id: {}", messageId);
+            }
+            case final EventMessage eventMessage -> {
+                // log the event with an event-specific logger
+                WebSocketUtils.logMessage(eventMessage);
 
-            // log the event with an event-specific logger
-            WebSocketUtils.logMessage(eventMessage);
+                final var event = DeviceEvent.of(eventMessage.getSubsystem(), eventMessage.getTopic());
+                event.fromEventMessage(eventMessage);
 
-            final var event = DeviceEvent.of(eventMessage.getSubsystem(), eventMessage.getTopic());
-            event.fromEventMessage(eventMessage);
-
-            this.eventPublisher.publishEvent(new DeviceEventWrapper<>(this, event));
-        } else {
-            throw new DeviceMessageException("invalidMessageType: " + message);
+                this.eventPublisher.publishEvent(new DeviceEventWrapper<>(this, event));
+            }
+            default -> throw new DeviceMessageException("invalidMessageType: " + message);
         }
     }
 

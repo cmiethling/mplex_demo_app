@@ -1,11 +1,12 @@
 package com.cmiethling.mplex.device.api;
 
+import com.cmiethling.mplex.device.message.ResultMessage;
 import lombok.NonNull;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public abstract class AbstractDeviceCommandTest extends AbstractDeviceTest {
     /**
@@ -27,9 +28,9 @@ public abstract class AbstractDeviceCommandTest extends AbstractDeviceTest {
     protected <T extends DeviceCommand> T fromResultMessage(@NonNull final T command,
                                                             @NonNull final String resourceName) throws Exception {
         final var message = loadMessage(resourceName);
-        assertTrue(message.isResult());
+        final var result = assertInstanceOf(ResultMessage.class, message);
 
-        command.fromResultMessage(message.asResult());
+        command.fromResultMessage(result);
         return command;
     }
 }
