@@ -30,13 +30,7 @@ public class FluidicsService extends AbstractSubsystem {
         if (!newError.equals(currentError)) {
             final var error = FluidicsError.valueOf(newError);
             this.fluidicsStatus.setFluidicsError(error);
-            sendErrorEvent(error);
+            sendErrorEvent(error, ErrorsEvent.TOPIC, ErrorsEvent.ERRORCODE);
         }
-    }
-
-    public void sendErrorEvent(final FluidicsError error) throws IOException, DeviceException {
-        final var event = createEventMessage(ErrorsEvent.TOPIC);
-        event.parameters().putInt(ErrorsEvent.ERRORCODE, error.code());
-        sendEventMessage(event);
     }
 }
