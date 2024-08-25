@@ -24,6 +24,9 @@ public class WebSocketServerService extends TextWebSocketHandler {
     @Autowired
     private DeviceMessageService deviceMessageService;
 
+    @Autowired
+    private EventLoggingService eventLoggingService;
+
     /**
      * Sends an event to the client.
      *
@@ -56,9 +59,12 @@ public class WebSocketServerService extends TextWebSocketHandler {
         final var deviceMessage = this.deviceMessageService.deserializeMessage(json);
         switch (deviceMessage) {
             case final RequestMessage request -> {
+                this.eventLoggingService.logRequest(request);
+
                 final var result = new ResultMessage(request.getId(), request.getSubsystem(), request.getTopic());
                 result.setError(ResultError.NONE);
                 sendMessage(result);
+                this.eventLoggingService.logResult(result);
             }
             default -> throw new IllegalStateException("Unexpected value: " + deviceMessage);
         }

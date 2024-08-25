@@ -15,7 +15,7 @@
 <section class="services-w3l-block py-5">
     <div class="container">
         <h1>Event Logs</h1>
-        <table border="5">
+        <table class="table">
             <tr>
                 <th>Timestamp</th>
                 <th>Type</th>
@@ -23,16 +23,16 @@
                 <th>Topic</th>
             </tr>
             <!--suppress HtmlUnknownTag, HtmlUnknownAttribute -->
-            <tr th:each="eventMessage : ${eventMessages}"
-                th:data-event="${eventMessage.getEvent()}"
-                th:data-subsystem="${eventMessage.subsystem}"
-                th:data-timestamp="${eventMessage.timestamp}"
-                th:data-topic="${eventMessage.topic}"
+            <tr th:each="logEntry : ${logEntries}"
+                th:data-event="${logEntry.getEvent()}"
+                th:data-request="${logEntry.getRequest()}"
+                th:data-result="${logEntry.getResult()}"
+                th:data-timestamp="${logEntry.timestamp}"
                 th:onclick="showEventDetails(this)">
-                <td th:text="${eventMessage.thymeleafTimestamp}">Timestamp</td>
-                <td>Event</td>
-                <td th:text="${eventMessage.subsystem}">Subsystem</td>
-                <td th:text="${eventMessage.topic}">Topic</td>
+                <td th:text="${logEntry.thymeleafTimestamp}">Timestamp</td>
+                <td th:text="${logEntry.type}">Type</td>
+                <td th:text="${logEntry.subsystem}">Subsystem</td>
+                <td th:text="${logEntry.topic}">Topic</td>
             </tr>
         </table>
 
@@ -45,7 +45,12 @@
 
         <script>
             function showEventDetails(row) {
+                // only 1 is not null
                 const event = row.getAttribute("data-event");
+                const request = row.getAttribute("data-request");
+                const result = row.getAttribute("data-result");
+                const deviceMessage = [event, request, result].filter(value => value !== null).pop();
+
                 const timestamp = new Date(row.getAttribute("data-timestamp"));
                 const options = {
                     year: 'numeric',
@@ -58,10 +63,7 @@
                 };
                 const formattedTimestamp = timestamp.toLocaleString('de-DE', options);
 
-                const topic = row.getAttribute("data-topic");
-                const subsystem = row.getAttribute("data-subsystem");
-                const json = JSON.stringify({ subsystem, topic }, null, 2);
-                const message = `${formattedTimestamp}: ${event}`;
+                const message = `${formattedTimestamp}: ${deviceMessage}`;
 
                 document.getElementById("eventDetails").innerText = message;
                 document.getElementById("eventDetailsModal").style.display = "block";

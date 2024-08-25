@@ -1,7 +1,10 @@
 package com.cmiethling.mplex.emulator.controller;
 
 import com.cmiethling.mplex.device.message.EventMessage;
+import com.cmiethling.mplex.device.message.RequestMessage;
+import com.cmiethling.mplex.device.message.ResultMessage;
 import com.cmiethling.mplex.emulator.model.MessageEntry;
+import lombok.Getter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Controller
 public class LogController {
 
@@ -17,7 +21,7 @@ public class LogController {
 
     @GetMapping("/logs")
     public String showLogs(final Model model) {
-        model.addAttribute("eventMessages", this.logEntries);
+        model.addAttribute("logEntries", this.logEntries);
         return "logs";
     }
 
@@ -26,7 +30,13 @@ public class LogController {
         this.logEntries.add(MessageEntry.ofEvent(eventMessage));
     }
 
-    public List<MessageEntry> getLogEntries() {
-        return this.logEntries;
+    @PostMapping("/log-request")
+    public void logRequest(final RequestMessage request) {
+        this.logEntries.add(MessageEntry.ofRequest(request));
+    }
+
+    @PostMapping("/log-result")
+    public void logResult(final ResultMessage result) {
+        this.logEntries.add(MessageEntry.ofResult(result));
     }
 }

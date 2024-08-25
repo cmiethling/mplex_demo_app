@@ -1,6 +1,8 @@
 package com.cmiethling.mplex.emulator.model;
 
 import com.cmiethling.mplex.device.message.EventMessage;
+import com.cmiethling.mplex.device.message.RequestMessage;
+import com.cmiethling.mplex.device.message.ResultMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
 import lombok.Getter;
 
@@ -39,13 +41,23 @@ public class MessageEntry {
                 null, event.toString());
     }
 
+    public static MessageEntry ofRequest(final RequestMessage request) {
+        return new MessageEntry(LocalDateTime.now(), MessageEntryType.REQUEST, request.getSubsystem(),
+                request.getTopic(), request.toString(), null);
+    }
+
+    public static MessageEntry ofResult(final ResultMessage result) {
+        return new MessageEntry(LocalDateTime.now(), MessageEntryType.RESULT, result.getSubsystem(),
+                result.getTopic(), null, result.toString());
+    }
+
     /**
      * Returns incoming request in JSON format.
      *
      * @return incoming request in JSON format
      */
     public String getRequest() {
-        if (this.type == MessageEntryType.COMMAND)
+        if (this.type == MessageEntryType.REQUEST)
             return this.in;
         return null;
     }
@@ -56,7 +68,7 @@ public class MessageEntry {
      * @return outgoing result in JSON format
      */
     public String getResult() {
-        if (this.type == MessageEntryType.COMMAND)
+        if (this.type == MessageEntryType.RESULT)
             return this.out;
         return null;
     }
