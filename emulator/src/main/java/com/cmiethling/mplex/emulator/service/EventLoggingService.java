@@ -21,8 +21,8 @@ public class EventLoggingService {
         this.logController.logRequest(requestMessage);
     }
 
-    public void logResult(final ResultMessage result) {
-        this.logController.logResult(result);
+    public void logFullCommand(final RequestMessage request, final ResultMessage result) {
+        this.logController.logFullCommand(request, result);
     }
 }
 

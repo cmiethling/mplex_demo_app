@@ -46,9 +46,9 @@ public class MessageEntry {
                 request.getTopic(), request.toString(), null);
     }
 
-    public static MessageEntry ofResult(final ResultMessage result) {
-        return new MessageEntry(LocalDateTime.now(), MessageEntryType.RESULT, result.getSubsystem(),
-                result.getTopic(), null, result.toString());
+    public static MessageEntry ofCommand(final RequestMessage request, final ResultMessage result) {
+        return new MessageEntry(LocalDateTime.now(), MessageEntryType.COMMAND, result.getSubsystem(),
+                result.getTopic(), request.toString(), result.toString());
     }
 
     /**
@@ -57,9 +57,10 @@ public class MessageEntry {
      * @return incoming request in JSON format
      */
     public String getRequest() {
-        if (this.type == MessageEntryType.REQUEST)
-            return this.in;
-        return null;
+        return switch (this.type) {
+            case REQUEST, COMMAND -> this.in;
+            default -> null;
+        };
     }
 
     /**
@@ -68,9 +69,10 @@ public class MessageEntry {
      * @return outgoing result in JSON format
      */
     public String getResult() {
-        if (this.type == MessageEntryType.RESULT)
-            return this.out;
-        return null;
+        return switch (this.type) {
+            case RESULT, COMMAND -> this.out;
+            default -> null;
+        };
     }
 
     /**

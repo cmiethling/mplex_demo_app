@@ -36,7 +36,7 @@ public class LogController {
     }
 
     @PostMapping("/log-result")
-    public void logResult(final ResultMessage result) {
-        this.logEntries.add(MessageEntry.ofResult(result));
+    public void logFullCommand(final RequestMessage request, final ResultMessage result) {
+        this.logEntries.add(MessageEntry.ofCommand(request, result));
     }
 }

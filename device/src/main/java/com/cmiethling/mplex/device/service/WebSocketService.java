@@ -30,7 +30,7 @@ public interface WebSocketService {
      * problem evaluating the result message >> {@link DeviceMessageException}.
      *
      * @param <T>     the type of the device command
-     * @param command CommandMessage wrapped as a DeviceCommand to be send to hardware
+     * @param command CommandMessage wrapped as a DeviceCommand to be sent to hardware
      * @return The ResultMessage wrapped as a DeviceCommand or a wrapped Exception
      * @throws DeviceException if the command cannot be sent
      */

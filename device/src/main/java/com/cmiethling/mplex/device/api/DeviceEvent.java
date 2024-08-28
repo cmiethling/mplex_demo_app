@@ -21,6 +21,7 @@ public interface DeviceEvent {
      * @return a new event implementation
      * @throws DeviceMessageException if no event implementation could be found for this subsystem and topic
      */
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     static DeviceEvent of(@NonNull final Subsystem subsystem, @NonNull final String topic) throws DeviceMessageException {
         return switch (subsystem) {
             case FLUIDICS -> switch (topic) {
@@ -65,6 +66,7 @@ public interface DeviceEvent {
      * @return a new event message
      * @throws DeviceMessageException if there is a problem while creating the message
      */
+    @SuppressWarnings("RedundantThrows")
     EventMessage toEventMessage() throws DeviceMessageException;
 
     /**

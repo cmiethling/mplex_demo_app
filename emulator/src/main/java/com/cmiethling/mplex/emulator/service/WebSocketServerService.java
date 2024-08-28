@@ -59,12 +59,15 @@ public class WebSocketServerService extends TextWebSocketHandler {
         final var deviceMessage = this.deviceMessageService.deserializeMessage(json);
         switch (deviceMessage) {
             case final RequestMessage request -> {
-                this.eventLoggingService.logRequest(request);
-
                 final var result = new ResultMessage(request.getId(), request.getSubsystem(), request.getTopic());
                 result.setError(ResultError.NONE);
-                sendMessage(result);
-                this.eventLoggingService.logResult(result);
+                try {
+                    sendMessage(result);
+                    this.eventLoggingService.logFullCommand(request, result);
+                } catch (final IOException | DeviceMessageException ex) {
+                    this.eventLoggingService.logRequest(request);
+                    throw ex;
+                }
             }
             default -> throw new IllegalStateException("Unexpected value: " + deviceMessage);
         }

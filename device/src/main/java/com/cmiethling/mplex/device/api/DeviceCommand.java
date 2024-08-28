@@ -36,6 +36,7 @@ public interface DeviceCommand {
      * @return a request message to be sent to the device
      * @throws DeviceMessageException if the request message could not be created, e.g. because of missing properties
      */
+    @SuppressWarnings("RedundantThrows")
     RequestMessage toRequestMessage() throws DeviceMessageException;
 
     /**

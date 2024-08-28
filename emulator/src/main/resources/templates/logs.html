@@ -28,6 +28,7 @@
                 th:data-request="${logEntry.getRequest()}"
                 th:data-result="${logEntry.getResult()}"
                 th:data-timestamp="${logEntry.timestamp}"
+                th:data-type="${logEntry.type}"
                 th:onclick="showEventDetails(this)">
                 <td th:text="${logEntry.thymeleafTimestamp}">Timestamp</td>
                 <td th:text="${logEntry.type}">Type</td>
@@ -46,10 +47,11 @@
         <script>
             function showEventDetails(row) {
                 // only 1 is not null
+                const type = row.getAttribute("data-type");
                 const event = row.getAttribute("data-event");
                 const request = row.getAttribute("data-request");
                 const result = row.getAttribute("data-result");
-                const deviceMessage = [event, request, result].filter(value => value !== null).pop();
+
 
                 const timestamp = new Date(row.getAttribute("data-timestamp"));
                 const options = {
@@ -63,7 +65,16 @@
                 };
                 const formattedTimestamp = timestamp.toLocaleString('de-DE', options);
 
-                const message = `${formattedTimestamp}: ${deviceMessage}`;
+                let message;
+                if (type === "EVENT") {
+                    message = `${formattedTimestamp}:\n${event}`;
+                } else if (type === "COMMAND") {
+                    message = `${formattedTimestamp}:\n${request}\n${result}`;
+                } else if (type === "REQUEST") {
+                    message = `${formattedTimestamp}:\n${request}`;
+                } else {
+                    message = null; // Oder eine andere Standardbehandlung, falls erforderlich
+                }
 
                 document.getElementById("eventDetails").innerText = message;
                 document.getElementById("eventDetailsModal").style.display = "block";
@@ -79,6 +90,7 @@
 
 <!-- check every 2s for new command entries -->
 <script src="/assets/js/logPolling.js"></script>
+<div th:replace="~{template :: footer_and_scripts}"></div>
 
 </body>
 </html>
