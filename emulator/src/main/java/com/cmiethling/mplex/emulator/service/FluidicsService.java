@@ -5,7 +5,6 @@ import com.cmiethling.mplex.device.api.SubsystemError;
 import com.cmiethling.mplex.device.api.fluidics.ErrorsEvent;
 import com.cmiethling.mplex.device.api.fluidics.FluidicsError;
 import com.cmiethling.mplex.device.message.Subsystem;
-import com.cmiethling.mplex.emulator.AbstractSubsystem;
 import com.cmiethling.mplex.emulator.model.FluidicsStatus;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;

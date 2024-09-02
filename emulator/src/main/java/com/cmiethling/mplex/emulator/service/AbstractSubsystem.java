@@ -1,11 +1,9 @@
-package com.cmiethling.mplex.emulator;
+package com.cmiethling.mplex.emulator.service;
 
 import com.cmiethling.mplex.device.DeviceException;
 import com.cmiethling.mplex.device.api.SubsystemError;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
-import com.cmiethling.mplex.emulator.service.EventLoggingService;
-import com.cmiethling.mplex.emulator.service.WebSocketServerService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
