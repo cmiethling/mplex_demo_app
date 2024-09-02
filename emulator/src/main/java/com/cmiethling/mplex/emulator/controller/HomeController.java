@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("SameReturnValue")
 @Controller
 public class HomeController {
 
@@ -59,12 +60,6 @@ public class HomeController {
             case HIGH_VOLTAGE -> this.highVoltageService.processError(currentValue, newValue);
             default -> throw new IllegalArgumentException("invalid subsystem: " + subsystem);
         }
-        return "redirect:/home";
-    }
-
-    @PostMapping(value = "/test")
-    public String saveMessage(@RequestParam final String bla) {
-        System.out.println(bla);
         return "redirect:/home";
     }
 }

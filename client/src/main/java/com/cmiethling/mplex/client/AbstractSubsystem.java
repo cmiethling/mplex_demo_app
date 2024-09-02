@@ -24,6 +24,7 @@ public abstract class AbstractSubsystem {
         return this.deviceCorePart.command(command);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     protected <T extends DeviceCommand> T sendCommand(final T command)
             throws DeviceException, ExecutionException, InterruptedException {
         return this.deviceCorePart.sendCommand(command);

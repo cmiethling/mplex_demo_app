@@ -46,6 +46,7 @@ public class DeviceCorePart {
         this.webSocketService.openConnection();
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public boolean closeConnection() throws ExecutionException, InterruptedException,
             TimeoutException {
         return this.webSocketService.sendClose().get(1, TimeUnit.SECONDS);

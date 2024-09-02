@@ -22,7 +22,7 @@ Author URL: http://w3layouts.com
 <section class="services-w3l-block py-5">
     <div class="container">
         <h1>Gel Pump Mode</h1>
-        <form action="/sendGelPumpModeCommand2" method="post">
+        <form method="post" th:action="/@{sendGelPumpModeCommand2}">
             <!-- Radio-Buttons für die Auswahl -->
             <label>
                 <input name="isOn" type="radio" value="true">

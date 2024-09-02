@@ -24,7 +24,7 @@ Author URL: http://w3layouts.com
 <section class="services-w3l-block py-5">
     <div class="container">
         <h1>Gel Pump Mode</h1>
-        <form action="/sendGelPumpModeCommand" method="post">
+        <form method="post" th:action="@{/sendGelPumpModeCommand}">
             <!-- Radio-Buttons für die Auswahl -->
             <label>
                 <input name="isOn" type="radio" value="true">
@@ -43,7 +43,7 @@ Author URL: http://w3layouts.com
 <section class="services-w3l-block py-5">
     <div class="container">
         <h1>WebSocket Test</h1>
-        <form action="/test" method="post">
+        <form method="post" th:action="@{/test}">
             <label>
                 <input name="bla" placeholder="Enter your message" type="text">
             </label>

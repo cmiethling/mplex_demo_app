@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.concurrent.ExecutionException;
 
+@SuppressWarnings("SameReturnValue")
 @Controller
 public class ServiceClientController {
     @Autowired

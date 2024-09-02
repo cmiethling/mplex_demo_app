@@ -2,6 +2,7 @@ package com.cmiethling.mplex.client.controller;
 
 import com.cmiethling.mplex.client.core.DeviceCorePart;
 import com.cmiethling.mplex.client.service.FluidicsService;
+import com.cmiethling.mplex.client.service.HighVoltageService;
 import com.cmiethling.mplex.device.DeviceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+@SuppressWarnings("SameReturnValue")
 @Controller
 public class HomeController {
     @Autowired
@@ -19,8 +21,8 @@ public class HomeController {
 
     @Autowired
     private FluidicsService fluidicsService;
-    // @Autowired
-    // private HighVoltageService highVoltageService;
+    @Autowired
+    private HighVoltageService highVoltageService;
 
     @GetMapping({"/home", "/", ""})
     public String displayHome() {

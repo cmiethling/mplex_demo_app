@@ -11,6 +11,7 @@ public class Contact {// pojo object zwischen frontend und backend
     // fields müssen wie in html (contact.html oder wo immer diese Daten erstellt werden)
 
     // 98, ex24: Bean validation
+    @SuppressWarnings("GrazieInspection")
     @NotBlank(message = "Name must not be blank.") // " " ist bei @NotEmpty erlaubt, bei @NotBlank nicht
     private String name;
     // 98, ex24: Bean validation

@@ -15,6 +15,7 @@ import java.util.List;
 
 @Getter
 @Controller
+@SuppressWarnings("SameReturnValue")
 public class LogController {
 
     private final List<MessageEntry> logEntries = new ArrayList<>();
