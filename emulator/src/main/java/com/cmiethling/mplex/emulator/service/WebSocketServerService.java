@@ -25,48 +25,57 @@ public class WebSocketServerService extends TextWebSocketHandler {
     private DeviceMessageService deviceMessageService;
 
     @Autowired
-    private EventLoggingService eventLoggingService;
+    private LogService logService;
 
     /**
      * Sends an event to the client.
      *
      * @param eventMessage the message to send
+     * @return {@code null} if the event was sent successfully, otherwise the error message
      */
-    public boolean broadcastEvent(@NonNull final EventMessage eventMessage) throws IOException, DeviceException {
-        if (this.session1 != null && this.session1.isOpen()) {
+    public String broadcastEvent(@NonNull final EventMessage eventMessage) {
+        try {
             sendMessage(eventMessage);
-            return true;
-        } else {
-            // TODO improve logging
-            log.info("could not send event. Session: " + this.session1);
-            return false;
+            return null;
+        } catch (final IOException | DeviceMessageException | NullPointerException ex) {
+            log.error("Could not send event: {}", ex.toString());
+            return ex.toString();
         }
     }
 
-    private void sendMessage(@NonNull final DeviceMessage eventMessage) throws DeviceMessageException, IOException {
+    private void sendMessage(@NonNull final DeviceMessage eventMessage) throws DeviceMessageException, IOException,
+            NullPointerException {
         final var json = this.deviceMessageService.serializeMessage(eventMessage);
         this.session1.sendMessage(new TextMessage(json));
-        log.info("Message sent: " + json);
+        log.info("Message sent: {}", json);
     }
 
+    /**
+     * Handles the incoming text message. This can only be a serialized {@link RequestMessage}.
+     *
+     * @param session the current session
+     * @param message the incoming serialized {@link RequestMessage}
+     * @throws DeviceException if there was a problem deserializing the textmessage.
+     */
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     @Override
     public void handleTextMessage(@NonNull final WebSocketSession session, @NonNull final TextMessage message)
-            throws DeviceException, IOException {
+            throws DeviceException {
 
         final String json = message.getPayload();
-        log.info("received: " + json);
+        log.info("received: {}", json);
 
         final var deviceMessage = this.deviceMessageService.deserializeMessage(json);
         switch (deviceMessage) {
             case final RequestMessage request -> {
                 final var result = new ResultMessage(request.getId(), request.getSubsystem(), request.getTopic());
+                // TODO: differentiate between different commands
                 result.setError(ResultError.NONE);
                 try {
                     sendMessage(result);
-                    this.eventLoggingService.logFullCommand(request, result);
+                    this.logService.logFullCommand(request, result);
                 } catch (final IOException | DeviceMessageException ex) {
-                    this.eventLoggingService.logRequest(request);
-                    throw ex;
+                    this.logService.logRequestOnly(request, ex.toString());
                 }
             }
             default -> throw new IllegalStateException("Unexpected value: " + deviceMessage);
@@ -77,7 +86,7 @@ public class WebSocketServerService extends TextWebSocketHandler {
     public void afterConnectionEstablished(@NonNull final WebSocketSession session) throws Exception {
         if (this.session1 != null) throw new IllegalStateException("session was already established");
         this.session1 = session;
-        log.info("Emulator Session opened: " + session.getId());
+        log.info("Emulator Session opened: {}", session.getId());
         super.afterConnectionEstablished(session);
     }
 

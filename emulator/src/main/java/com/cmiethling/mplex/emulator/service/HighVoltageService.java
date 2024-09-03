@@ -1,6 +1,5 @@
 package com.cmiethling.mplex.emulator.service;
 
-import com.cmiethling.mplex.device.DeviceException;
 import com.cmiethling.mplex.device.api.SubsystemError;
 import com.cmiethling.mplex.device.api.hv.ErrorsEvent;
 import com.cmiethling.mplex.device.api.hv.HighVoltageError;
@@ -9,8 +8,6 @@ import com.cmiethling.mplex.emulator.model.HighVoltageStatus;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 @Service
 public class HighVoltageService extends AbstractSubsystem {
@@ -24,12 +21,14 @@ public class HighVoltageService extends AbstractSubsystem {
 
     public SubsystemError getHighVoltageError() {return this.highVoltageStatus.getHighVoltageError();}
 
-    public void processError(@NonNull final String currentError, @NonNull final String newError) throws IOException,
-            DeviceException {
+    public void processError(@NonNull final String currentError, @NonNull final String newError) {
+        final var error = HighVoltageError.valueOf(newError);
+        final var event = createErrorEvent(error, ErrorsEvent.TOPIC, ErrorsEvent.ERRORCODE);
+
         if (!newError.equals(currentError)) {
-            final var error = HighVoltageError.valueOf(newError);
             this.highVoltageStatus.setHighVoltageError(error);
-            sendErrorEvent(error, ErrorsEvent.TOPIC, ErrorsEvent.ERRORCODE);
-        }
+            sendEvent(event);
+        } else
+            logEventNotSent(event, NEW_STATE_EQUALS_CURRENT_STATE);
     }
 }

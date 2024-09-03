@@ -5,6 +5,8 @@ import com.cmiethling.mplex.device.message.RequestMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
 import lombok.Getter;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,10 +25,12 @@ public class MessageEntry {
     private final String out;
     @Getter
     private final String thymeleafTimestamp;
+    @Getter
+    private final boolean sent;
 
     public MessageEntry(final LocalDateTime timestamp, final MessageEntryType type, final Subsystem subsystem,
                         final String topic, final String in,
-                        final String out) {
+                        final String out, final boolean sent) {
         this.timestamp = timestamp;
         this.type = type;
         this.subsystem = subsystem;
@@ -34,21 +38,25 @@ public class MessageEntry {
         this.in = in;
         this.out = out;
         this.thymeleafTimestamp = timestamp.format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm:ss"));
+        this.sent = sent;
     }
 
-    public static MessageEntry ofEvent(final EventMessage event) {
+    public static MessageEntry ofEvent(final EventMessage event, @Nullable final String error) {
+        if (error == null)
+            return new MessageEntry(LocalDateTime.now(), MessageEntryType.EVENT, event.getSubsystem(), event.getTopic(),
+                    null, event.toString(), true);
         return new MessageEntry(LocalDateTime.now(), MessageEntryType.EVENT, event.getSubsystem(), event.getTopic(),
-                null, event.toString());
+                null, error, false);
     }
 
-    public static MessageEntry ofRequest(final RequestMessage request) {
+    public static MessageEntry ofRequest(final RequestMessage request, @NonNull final String error) {
         return new MessageEntry(LocalDateTime.now(), MessageEntryType.REQUEST, request.getSubsystem(),
-                request.getTopic(), request.toString(), null);
+                request.getTopic(), error, null, false);
     }
 
     public static MessageEntry ofCommand(final RequestMessage request, final ResultMessage result) {
         return new MessageEntry(LocalDateTime.now(), MessageEntryType.COMMAND, result.getSubsystem(),
-                result.getTopic(), request.toString(), result.toString());
+                result.getTopic(), request.toString(), result.toString(), true);
     }
 
     /**
