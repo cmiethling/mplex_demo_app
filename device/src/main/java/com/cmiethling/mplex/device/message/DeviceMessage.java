@@ -1,36 +1,11 @@
 package com.cmiethling.mplex.device.message;
 
-import com.cmiethling.mplex.device.DeviceMessageException;
-
 import java.util.UUID;
 
 /**
  * This interface defines a device messages.
  */
 public sealed interface DeviceMessage permits AbstractDeviceMessage {
-
-    /**
-     * Checks if this is a request message.
-     *
-     * @return {@code true} if this message is a request, otherwise {@code false}
-     */
-    boolean isRequest();
-
-    boolean isResult();
-
-    boolean isEvent();
-
-    /**
-     * Returns this message as a {@link RequestMessage}.
-     *
-     * @return the request message
-     * @throws DeviceMessageException if this message cannot be cast into a command
-     */
-    RequestMessage asRequest() throws DeviceMessageException;
-
-    ResultMessage asResult() throws DeviceMessageException;
-
-    EventMessage asEvent() throws DeviceMessageException;
 
     /**
      * Returns the unique id for this message. Depending on the workflow the id might not have been initialized yet. In

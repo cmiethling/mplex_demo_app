@@ -171,7 +171,7 @@ public final class MessageParametersImpl implements MessageParameters {
             return false;
         final var other = (MessageParametersImpl) obj;
 
-        // we have to implement the Map comparison ourself to handle numbers correctly
+        // We need to implement our own Map comparison to handle numbers correctly.
         final var otherParameters = other.parameters;
         if (this.parameters.size() != otherParameters.size())
             return false;

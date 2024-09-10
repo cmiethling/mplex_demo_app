@@ -1,17 +1,17 @@
 package com.cmiethling.mplex.device.websocket;
 
 import com.cmiethling.mplex.device.DeviceMessageException;
+import com.cmiethling.mplex.device.DeviceModule;
 import com.cmiethling.mplex.device.api.DeviceCommand;
 import com.cmiethling.mplex.device.api.DeviceEvent;
-import com.cmiethling.mplex.device.config.DeviceModule;
 import com.cmiethling.mplex.device.message.DeviceMessage;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
 import com.cmiethling.mplex.device.service.DeviceMessageService;
 import org.slf4j.Logger;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.net.http.WebSocket;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -20,24 +20,24 @@ import java.util.concurrent.ConcurrentMap;
 
 public class MyWebSocketListener implements WebSocket.Listener {
 
-    private static final Logger log = DeviceModule.logger();
-    // beans
+    private final Logger log = DeviceModule.logger();
+
     private final DeviceMessageService deviceMessageService;
-    private final List<DeviceEventListener> deviceEventListeners;
     private final ConcurrentMap<UUID, CommandTaskInfo<? extends DeviceCommand>> commandTasks;
+    private final ApplicationEventPublisher eventPublisher;
+
     private final StringBuilder textData = new StringBuilder();
 
-    public MyWebSocketListener(final List<DeviceEventListener> deviceEventListeners, final ConcurrentMap<UUID,
-            CommandTaskInfo<? extends DeviceCommand>> commandTasks, final DeviceMessageService deviceMessageService) {
-        this.deviceEventListeners = deviceEventListeners;
+    public MyWebSocketListener(final ConcurrentMap<UUID,
+            CommandTaskInfo<? extends DeviceCommand>> commandTasks, final DeviceMessageService deviceMessageService,
+                               final ApplicationEventPublisher eventPublisher) {
         this.commandTasks = commandTasks;
         this.deviceMessageService = deviceMessageService;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
-     * The application receives a {@link ResultMessage} or {@link EventMessage} from the hardware (via the
-     * {@link java.net.http.WebSocket.Listener WebSocket.Listener}) and informs all {@link DeviceEventListener
-     * DeviceListeners}.
+     * The application receives a {@link ResultMessage} or an {@link EventMessage} from the hardware.
      * <p>
      * Note that {@code onText()} itself is synchronous so it can only be called one at a time, but the returned
      * CompletionStage (=CompletableFuture) is asynchronous so one has to differentiate
@@ -68,7 +68,7 @@ public class MyWebSocketListener implements WebSocket.Listener {
                 try {
                     computeReceivedMessage(this.deviceMessageService.deserializeMessage(json));
                 } catch (final DeviceMessageException ex) {
-                    log.error("", ex);
+                    this.log.error("", ex);
                     throw new CompletionException(ex);
                 }
             });
@@ -78,50 +78,42 @@ public class MyWebSocketListener implements WebSocket.Listener {
     }
 
     void computeReceivedMessage(final DeviceMessage message) throws DeviceMessageException {
-        if (message.isResult()) {
-            final var resultMessage = message.asResult();
-            // log the result with a result-specific logger
-            WebSocketUtils.logMessage(resultMessage);
+        switch (message) {
+            case final ResultMessage result -> {
+                // log the result with a result-specific logger
+                WebSocketUtils.logMessage(result);
 
-            // find a waiting task by the id
-            final var messageId = resultMessage.getId();
-            final var taskInfo = this.commandTasks.get(messageId);
-            if (taskInfo != null) {
-                // provide the message to the task
-                taskInfo.setResultMessage(resultMessage);
-            } else
-                WebSocketUtils.receiveLogger.warn("Unexpected result message, id: " + messageId);
-        } else if (message.isEvent()) {
-            final var eventMessage = message.asEvent(); // outside ComFut because of checkedExc
+                // find a waiting task by the id
+                final var messageId = result.getId();
+                final var taskInfo = this.commandTasks.get(messageId);
+                if (taskInfo != null) {
+                    // provide the message to the task
+                    taskInfo.setResultMessage(result);
+                } else
+                    WebSocketUtils.receiveLogger.warn("Unexpected result message, id: {}", messageId);
+            }
+            case final EventMessage eventMessage -> {
+                // log the event with an event-specific logger
+                WebSocketUtils.logMessage(eventMessage);
 
-            // log the event with an event-specific logger
-            WebSocketUtils.logMessage(eventMessage);
+                final var event = DeviceEvent.of(eventMessage.getSubsystem(), eventMessage.getTopic());
+                event.fromEventMessage(eventMessage);
 
-            final var event = DeviceEvent.of(eventMessage.getSubsystem(), eventMessage.getTopic());
-            event.fromEventMessage(eventMessage);
-
-            this.deviceEventListeners.forEach(listener -> listener.onEvent(event));
-        } else {
-            throw new DeviceMessageException("invalidMessageType: " + message);
+                this.eventPublisher.publishEvent(new DeviceEventWrapper<>(this, event));
+            }
+            default -> throw new DeviceMessageException("invalidMessageType: " + message);
         }
     }
 
     @Override
     public CompletionStage<?> onClose(final WebSocket webSocket, final int statusCode, final String reason) {
-        log.info("WebSocketClient onClose={}   >> status={}, reason: {}", webSocket, statusCode, reason);
+        this.log.info("WebSocketClient onClose={}   >> status={}, reason: {}", webSocket, statusCode, reason);
         this.commandTasks.clear();
         return null;
     }
 
     @Override
     public void onError(final WebSocket webSocket, final Throwable error) {
-        log.error("Device connection error: ", error);
+        this.log.error("Device connection error: ", error);
     }
-
-    /**
-     * For test purposes only.
-     *
-     * @return the map with the waiting command tasks
-     */
-    ConcurrentMap<UUID, CommandTaskInfo<?>> getCommandTasks() {return this.commandTasks;}
 }

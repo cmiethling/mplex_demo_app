@@ -51,11 +51,7 @@ public final class EventMessageTest {
                 }
                 """;
         final var message = this.deviceMessageService.deserializeMessage(json);
-        assertFalse(message.isRequest());
-        assertFalse(message.isResult());
-        assertTrue(message.isEvent());
-
-        final var event = message.asEvent();
+        final var event = assertInstanceOf(EventMessage.class, message);
         // System.out.println(event);
 
         assertNotNull(event);

@@ -1,6 +1,6 @@
 package com.cmiethling.mplex.device.websocket;
 
-import com.cmiethling.mplex.device.config.DeviceModule;
+import com.cmiethling.mplex.device.DeviceModule;
 import com.cmiethling.mplex.device.message.DeviceMessage;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.RequestMessage;
@@ -13,11 +13,6 @@ import java.util.function.Supplier;
 
 @Configuration
 public class WebSocketUtils {
-    /**
-     * Name of the logger for sent raw messages.
-     */
-    private static final String SEND_LOGGER_NAME = "device.send";
-    public static final Logger sendLogger = DeviceModule.logger(SEND_LOGGER_NAME);
     /**
      * Name of the logger for received raw messages.
      */
@@ -57,8 +52,8 @@ public class WebSocketUtils {
         }
 
         // get a message-specific logger
-        final var logger = DeviceModule
-                .logger(String.format(loggerNamePattern, message.getSubsystem().id(), message.getTopic()));
+        final var logger = DeviceModule.logger(
+                String.format(loggerNamePattern, message.getSubsystem().id(), message.getTopic()));
 
         final Supplier<String> header = () -> "%s: id=%s subsystem=%s topic=%s    ".formatted(logMessagePrefix,
                 message.getId(), message.getSubsystem(), message.getTopic());

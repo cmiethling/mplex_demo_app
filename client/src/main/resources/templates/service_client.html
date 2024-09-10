@@ -1,0 +1,43 @@
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+-->
+<!doctype html>
+<!--suppress HtmlUnknownTag -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Client</title>
+    <!-- Google fonts -->
+    <link href="//fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="/assets/css/style-starter.css" rel="stylesheet">
+</head>
+
+<body>
+<div th:replace="~{template :: header}">...</div>
+
+<section class="services-w3l-block py-5">
+    <div class="container">
+        <h1>Gel Pump Mode</h1>
+        <form method="post" th:action="/@{sendGelPumpModeCommand2}">
+            <!-- Radio-Buttons für die Auswahl -->
+            <label>
+                <input name="isOn" type="radio" value="true">
+                On
+            </label>
+            <br>
+            <label>
+                <input checked name="isOn" type="radio" value="false">
+                Off
+            </label>
+            <br>
+            <button>Send Message</button>
+        </form>
+    </div>
+</section>
+
+</body>
+</html>

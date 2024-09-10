@@ -1,6 +1,5 @@
 package com.cmiethling.mplex.device.message;
 
-import com.cmiethling.mplex.device.DeviceMessageException;
 import com.fasterxml.jackson.annotation.*;
 import lombok.NonNull;
 
@@ -73,36 +72,6 @@ public abstract sealed class AbstractDeviceMessage implements DeviceMessage
     // abstract so JsonProperty("name") can be called in all Subclasses as the "name" is always different
     @Override
     public abstract MessageParameters parameters();
-
-    @Override
-    @JsonIgnore // otherwise in json: "command" : true
-    public boolean isRequest() {return this instanceof RequestMessage;}
-
-    @Override
-    @JsonIgnore
-    public boolean isResult() {return this instanceof ResultMessage;}
-
-    @Override
-    @JsonIgnore
-    public boolean isEvent() {return this instanceof EventMessage;}
-
-    @Override
-    public RequestMessage asRequest() throws DeviceMessageException {
-        if (isRequest()) return (RequestMessage) this;
-        throw new DeviceMessageException("DeviceMessage is no Command", this);
-    }
-
-    @Override
-    public ResultMessage asResult() throws DeviceMessageException {
-        if (isResult()) return (ResultMessage) this;
-        throw new DeviceMessageException("DeviceMessage is no Result", this);
-    }
-
-    @Override
-    public EventMessage asEvent() throws DeviceMessageException {
-        if (isEvent()) return (EventMessage) this;
-        throw new DeviceMessageException("DeviceMessage is no Event", this);
-    }
 
     @Override
     public final UUID getId() {

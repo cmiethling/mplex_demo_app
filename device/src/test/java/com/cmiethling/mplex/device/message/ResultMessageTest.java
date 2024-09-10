@@ -35,12 +35,9 @@ public final class ResultMessageTest {
                 """;
 
         final var message = this.deviceMessageService.deserializeMessage(json);
-        assertFalse(message.isRequest());
-        assertTrue(message.isResult());
-        assertFalse(message.isEvent());
-
-        final var result = message.asResult();
+        final var result = assertInstanceOf(ResultMessage.class, message);
         // System.out.println(result);
+
         assertNotNull(result);
         assertEquals(ANY_UUID, result.getId());
         assertEquals(Subsystem.MOTOR_CONTROL, result.getSubsystem());

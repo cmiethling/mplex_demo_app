@@ -7,9 +7,8 @@ import com.cmiethling.mplex.device.api.DeviceEvent;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.RequestMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
-import com.cmiethling.mplex.device.websocket.DeviceEventListener;
+import com.cmiethling.mplex.device.websocket.DeviceEventWrapper;
 
-import java.time.Duration;
 import java.util.concurrent.Future;
 
 /**
@@ -17,25 +16,11 @@ import java.util.concurrent.Future;
  * <ul>
  * <li>It sends a {@link RequestMessage} (wrapped as {@link DeviceCommand}) to the (simulated) hardware and it waits for
  * a {@link ResultMessage} (again wrapped as {@link DeviceCommand}).</li>
- * <li>The {@link DeviceEventListener} will receive independent events from the hardware as {@link EventMessage
- * EventMessages} (wrapped as {@link DeviceEvent DeviceEvents}).</li>
+ * <li>Independent events from the hardware will be sent as {@link EventMessage
+ * EventMessages} (wrapped as {@link DeviceEvent DeviceEvents} and {@link DeviceEventWrapper DeviceEventWrapper}).</li>
  * </ul>
  */
 public interface WebSocketService {
-
-    /**
-     * Registers a new listener to this device.
-     *
-     * @param l the new listener
-     */
-    void addDeviceEventListener(DeviceEventListener l);
-
-    /**
-     * Removes a registered listener from the device.
-     *
-     * @param l the new listener
-     */
-    void removeDeviceEventListener(DeviceEventListener l);
 
     /**
      * The application sends a {@link RequestMessage} wrapped as a {@link DeviceCommand} to the hardware (either
@@ -44,17 +29,16 @@ public interface WebSocketService {
      * ExecutionException. If there is a problem with the WebSocket connection >> {@link DeviceException}. If there is a
      * problem evaluating the result message >> {@link DeviceMessageException}.
      *
-     * @param <T>      the type of the device command
-     * @param command  CommandMessage wrapped as a DeviceCommand to be send to hardware
-     * @param duration how long to wait before completing exceptionally with a TimeoutException
+     * @param <T>     the type of the device command
+     * @param command CommandMessage wrapped as a DeviceCommand to be sent to hardware
      * @return The ResultMessage wrapped as a DeviceCommand or a wrapped Exception
      * @throws DeviceException if the command cannot be sent
      */
-    <T extends DeviceCommand> Future<T> sendCommand(T command, Duration duration) throws DeviceException;
+    <T extends DeviceCommand> Future<T> sendCommand(T command) throws DeviceException;
 
     /**
      * Cancel all pending commands. This will produce {@link InterruptedException}s in all {@link Future}s returned by
-     * {@link #sendCommand(DeviceCommand, Duration)}.
+     * {@link #sendCommand(DeviceCommand)}.
      */
     void cancelAllCommands();
 
