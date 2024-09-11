@@ -8,11 +8,24 @@ proficiency in Spring Boot and to illustrate a transition from desktop to web-ba
 
 The project is organized into the following main components:
 
-- `client`: The main application that contains the logic for controlling the laboratory device. The client runs
-  on [http://localhost:8090](http://localhost:8090).
-- `emulator`: Application for simulating the hardware environment for testing purposes. The emulator runs
-  on [http://localhost:8091](http://localhost:8091).
-- `device`: Shared module that provides services for communication between the client and hardware.
+**client**
+
+- The main application that contains the logic for controlling the laboratory device.
+- it runs on [http://localhost:8090](http://localhost:8090).
+- The application includes a service client, which is used by a service technician for maintenance or control of the
+  device. (Username + Password = `service`)
+
+**emulator**
+
+- Application for simulating the hardware environment for testing purposes.
+- It runs on [http://localhost:8091](http://localhost:8091).
+- It allows the software to be tested without needing the physical device.
+
+**device**
+
+- This is a shared module that provides services for communication between the client and the hardware (or the
+  emulator).
+- It acts as an interface between the software (client) and the actual or simulated hardware (emulator).
 
 ## Technologies Used
 
@@ -23,6 +36,7 @@ The project is organized into the following main components:
 - **Maven**: For project management and dependency resolution.
 - **Spring Boot**: For building the RESTful backend services:
     - **_Jackson_** for device interface API.
+    - **_Spring Security_** for logging in as service technician in client (Username + Password: `service`)
     - **_Spring Events_** for receiving events from the device.
     - **_org.springframework.web.socket_** for WebSocket server connection in the emulator.
 
