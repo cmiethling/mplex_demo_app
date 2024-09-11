@@ -1,5 +1,6 @@
 package com.cmiethling.mplex.client.controller;
 
+import com.cmiethling.mplex.client.config.Utils;
 import com.cmiethling.mplex.client.core.DeviceCorePart;
 import com.cmiethling.mplex.client.service.FluidicsService;
 import com.cmiethling.mplex.client.service.HighVoltageService;
@@ -24,19 +25,19 @@ public class HomeController {
     @Autowired
     private HighVoltageService highVoltageService;
 
-    @GetMapping({"/home", "/", ""})
+    @GetMapping({Utils.HOME, Utils.PUBLIC + Utils.HOME, "/", ""})
     public String displayHome() {
-        return "home.html";
+        return Utils.HOME_HTML;
     }
 
-    @PostMapping("/sendGelPumpModeCommand")
+    @PostMapping(Utils.PUBLIC + Utils.SEND_GEL_PUMP_MODE_COMMAND)
     public String sendGelPumpModeCommand(@RequestParam final boolean isOn) throws DeviceException, ExecutionException
             , InterruptedException {
         this.fluidicsService.sendGelPumpMode(isOn);
-        return "redirect:/home";
+        return "redirect:" + Utils.HOME;
     }
 
-    @PostMapping(value = "/test")
+    @PostMapping(Utils.PUBLIC + "/test")
     public String openConnection(@RequestParam final String bla) throws DeviceException, InterruptedException,
             ExecutionException, TimeoutException {
         System.out.println(bla);
@@ -46,6 +47,6 @@ public class HomeController {
         if (bla.equals("false")) {
             this.deviceCorePart.closeConnection();
         }
-        return "redirect:/home";
+        return "redirect:" + Utils.HOME;
     }
 }

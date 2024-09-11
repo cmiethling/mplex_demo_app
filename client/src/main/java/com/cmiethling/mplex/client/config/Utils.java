@@ -5,15 +5,21 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Utils {
 
-    public static final String COURSES = "/courses";
-    public static final String ABOUT = "/about";
-    public static final String HOLIDAYS = "/holidays";
-    public static final String HOME = "/home";
-    public static final String CONTACT = "/contact";
+    public static final String PUBLIC = "/public";
+    public static final String SEND_GEL_PUMP_MODE_COMMAND = "/sendGelPumpModeCommand";
 
-    public static final String COURSES_HTML = COURSES.substring(1) + ".html";
-    public static final String ABOUT_HTML = ABOUT.substring(1) + ".html";
-    public static final String HOLIDAYS_HTML = HOLIDAYS.substring(1) + ".html";
-    public static final String HOME_HTML = HOME.substring(1) + ".html";
-    public static final String CONTACT_HTML = CONTACT.substring(1) + ".html";
+    // web pages
+    public static final String LOGIN = "/login";
+    public static final String LOGOUT = "/logout";
+    public static final String SERVICE_CLIENT = "/service_client";
+    public static final String HOME = "/home";
+
+    public static final String LOGIN_HTML = getHtmlString(LOGIN);
+    public static final String LOGOUT_HTML = getHtmlString(LOGOUT);
+    public static final String SERVICE_CLIENT_HTML = getHtmlString(SERVICE_CLIENT);
+    public static final String HOME_HTML = getHtmlString(HOME);
+
+    private static String getHtmlString(final String url) {
+        return url.substring(1) + ".html";
+    }
 }

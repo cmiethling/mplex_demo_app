@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--suppress HtmlUnknownTag, HtmlUnknownTarget -->
-<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+<html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -16,10 +16,10 @@
             <div class="collapse navbar-collapse" id="navbarScroll">
                 <ul class="navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll">
                     <!-- 120, ex29: show when not authenticated-->
-                    <li class="nav-item" sec:authorize="isAnonymous()">
+                    <li class="nav-item">
                         <a aria-current="page" class="nav-link" th:href="@{/home}">Home</a>
                     </li>
-                    <li class="nav-item" sec:authorize="isAnonymous()">
+                    <li class="nav-item">
                         <a class="nav-link" th:href="@{/logs}">Logs</a>
                     </li>
                 </ul>

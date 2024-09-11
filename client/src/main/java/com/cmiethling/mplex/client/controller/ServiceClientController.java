@@ -1,5 +1,6 @@
 package com.cmiethling.mplex.client.controller;
 
+import com.cmiethling.mplex.client.config.Utils;
 import com.cmiethling.mplex.client.core.DeviceCorePart;
 import com.cmiethling.mplex.client.service.FluidicsService;
 import com.cmiethling.mplex.device.DeviceException;
@@ -20,15 +21,15 @@ public class ServiceClientController {
     @Autowired
     private FluidicsService fluidicsService;
 
-    @RequestMapping({"/service_client"})
+    @RequestMapping(Utils.SERVICE_CLIENT)
     public String displayServiceClient() {
-        return "service_client.html";
+        return Utils.SERVICE_CLIENT_HTML;
     }
 
-    @PostMapping("/sendGelPumpModeCommand2")
+    @PostMapping(Utils.SERVICE_CLIENT + "/sendGelPumpModeCommand2")
     public String sendGelPumpModeCommand(@RequestParam final boolean isOn) throws DeviceException, ExecutionException
             , InterruptedException {
         this.fluidicsService.sendGelPumpMode(isOn);
-        return "redirect:/service_client";
+        return "redirect:" + Utils.SERVICE_CLIENT;
     }
 }

@@ -1,0 +1,42 @@
+package com.cmiethling.mplex.client.controller;
+
+import com.cmiethling.mplex.client.config.Utils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+@Slf4j
+public class LoginController {
+
+    @RequestMapping(value = Utils.LOGIN, method = {RequestMethod.GET, RequestMethod.POST})
+    public String login(final Model model,
+                        // /login?error=true    and /login?logout=true
+                        @RequestParam(required = false) final boolean error,
+                        @RequestParam(required = false) final boolean logout) {
+
+        String msg = null;
+        if (error) msg = "Username or Password is incorrect!";
+        else if (logout) msg = "Successfully logged out.";
+        model.addAttribute("message", msg);
+
+        return Utils.LOGIN_HTML;
+    }
+
+    @GetMapping(value = Utils.LOGOUT)
+    public String logoutPage(final HttpServletRequest request, final HttpServletResponse response) {
+        final var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null)
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+
+        return "redirect:" + Utils.LOGIN + "?logout=true";
+    }
+}

@@ -4,43 +4,48 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 public class ProjectSecurityConfig {
 
-    public static final String USER_ROLE = "USER";
-    public static final String ADMIN_ROLE = "ADMIN";
+    public static final String SERVICE_ROLE = "SERVICE";
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(final HttpSecurity http,
                                                    final HandlerMappingIntrospector introspector) throws Exception {
-        http.authorizeHttpRequests(request -> request.anyRequest().permitAll());
-        http.httpBasic(Customizer.withDefaults());
-        http.formLogin(Customizer.withDefaults());
+        final var builder = new MvcRequestMatcher.Builder(introspector);
+        http.authorizeHttpRequests(request -> {
+            request.requestMatchers(builder.pattern("/"), builder.pattern(Utils.HOME)).permitAll();
+            request.requestMatchers(builder.pattern(Utils.PUBLIC + "/**")).permitAll();
+            // so that css in /assets can work
+            request.requestMatchers(builder.pattern("/assets/**")).permitAll();
 
-        http.csrf(AbstractHttpConfigurer::disable);
+            request.requestMatchers(builder.pattern(Utils.SERVICE_CLIENT + "/**")).authenticated();
+            request.requestMatchers(builder.pattern(Utils.LOGIN), builder.pattern(Utils.LOGOUT)).permitAll();
+        });
+        http.httpBasic(Customizer.withDefaults());
+
+        http.formLogin(loginConfigure -> loginConfigure.loginPage(Utils.LOGIN).defaultSuccessUrl(Utils.SERVICE_CLIENT)
+                .failureUrl(Utils.LOGIN + "?error=true").permitAll());
+
+        // all POSTS in home controller are allowed
+        http.csrf(csrfConfigurer -> csrfConfigurer.ignoringRequestMatchers(builder.pattern(Utils.PUBLIC + "/**")));
         return http.build();
     }
 
-    // 116, ex29: mehrere users
     @Bean
     public InMemoryUserDetailsManager userDetailsService() {
         final var encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        // User.withDefaultPasswordEncoder();
-        final var user = User.withUsername("user")
-                .password(encoder.encode("user"))
-                .roles(USER_ROLE)
+        final var serviceTechnician = User.withUsername("service")
+                .password(encoder.encode("service"))
+                .roles(SERVICE_ROLE)
                 .build();
-        final var admin = User.withUsername("admin")
-                .password(encoder.encode("admin"))
-                .roles(ADMIN_ROLE)
-                .build();
-        return new InMemoryUserDetailsManager(admin, user);
+        return new InMemoryUserDetailsManager(serviceTechnician);
     }
 }
