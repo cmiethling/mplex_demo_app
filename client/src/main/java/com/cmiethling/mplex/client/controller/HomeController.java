@@ -7,12 +7,12 @@ import com.cmiethling.mplex.client.service.HighVoltageService;
 import com.cmiethling.mplex.device.DeviceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 @SuppressWarnings("SameReturnValue")
 @Controller
@@ -26,7 +26,9 @@ public class HomeController {
     private HighVoltageService highVoltageService;
 
     @GetMapping({Utils.HOME, Utils.PUBLIC + Utils.HOME, "/", ""})
-    public String displayHome() {
+    public String displayHome(@RequestParam(required = false) final boolean logout, final Model model) {
+        final var msg = logout ? "Successfully logged out." : null;
+        model.addAttribute("message", msg);
         return Utils.HOME_HTML;
     }
 
@@ -34,19 +36,6 @@ public class HomeController {
     public String sendGelPumpModeCommand(@RequestParam final boolean isOn) throws DeviceException, ExecutionException
             , InterruptedException {
         this.fluidicsService.sendGelPumpMode(isOn);
-        return "redirect:" + Utils.HOME;
-    }
-
-    @PostMapping(Utils.PUBLIC + "/test")
-    public String openConnection(@RequestParam final String bla) throws DeviceException, InterruptedException,
-            ExecutionException, TimeoutException {
-        System.out.println(bla);
-        if (bla.equals("true")) {
-            this.deviceCorePart.openConnection();
-        }
-        if (bla.equals("false")) {
-            this.deviceCorePart.closeConnection();
-        }
         return "redirect:" + Utils.HOME;
     }
 }

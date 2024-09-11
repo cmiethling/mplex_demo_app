@@ -22,6 +22,7 @@ Author URL: http://w3layouts.com
 
 <section class="services-w3l-block py-5">
     <div class="container">
+        <div class="alert alert-warning" th:if="${!#strings.isEmpty(message)}" th:text="${message}"></div>
         <h2>Gel Pump</h2>
         <form method="post" th:action="@{/public/sendGelPumpModeCommand}">
             <!-- Radio-Buttons für die Auswahl -->
@@ -37,18 +38,7 @@ Author URL: http://w3layouts.com
         </form>
     </div>
 </section>
-<section class="services-w3l-block py-5">
-    <div class="container">
-        <h2>WebSocket Test</h2>
-        <form method="post" th:action="@{/public/test}">
-            <label>
-                <input name="bla" placeholder="Enter your message" type="text">
-            </label>
-            <button id="postButton">Send Message</button>
 
-        </form>
-    </div>
-</section>
 
 <!-- import scripts.html-->
 <!--<div th:replace="~{template :: scripts}"></div>-->

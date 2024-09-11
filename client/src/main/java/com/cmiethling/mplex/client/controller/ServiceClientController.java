@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 @SuppressWarnings("SameReturnValue")
 @Controller
@@ -30,6 +31,16 @@ public class ServiceClientController {
     public String sendGelPumpModeCommand(@RequestParam final boolean isOn) throws DeviceException, ExecutionException
             , InterruptedException {
         this.fluidicsService.sendGelPumpMode(isOn);
+        return "redirect:" + Utils.SERVICE_CLIENT;
+    }
+
+    @PostMapping(Utils.SERVICE_CLIENT + "/test")
+    public String openConnection(@RequestParam final String bla) throws DeviceException, InterruptedException,
+            ExecutionException, TimeoutException {
+        switch (bla) {
+            case "true" -> this.deviceCorePart.openConnection();
+            case "false" -> this.deviceCorePart.closeConnection();
+        }
         return "redirect:" + Utils.SERVICE_CLIENT;
     }
 }

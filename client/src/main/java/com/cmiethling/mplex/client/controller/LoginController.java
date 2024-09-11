@@ -18,14 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LoginController {
 
     @RequestMapping(value = Utils.LOGIN, method = {RequestMethod.GET, RequestMethod.POST})
-    public String login(final Model model,
-                        // /login?error=true    and /login?logout=true
-                        @RequestParam(required = false) final boolean error,
-                        @RequestParam(required = false) final boolean logout) {
+    public String login(final Model model, // /login?error=true
+                        @RequestParam(required = false) final boolean error) {
 
         String msg = null;
         if (error) msg = "Username or Password is incorrect!";
-        else if (logout) msg = "Successfully logged out.";
         model.addAttribute("message", msg);
 
         return Utils.LOGIN_HTML;
@@ -37,6 +34,6 @@ public class LoginController {
         if (auth != null)
             new SecurityContextLogoutHandler().logout(request, response, auth);
 
-        return "redirect:" + Utils.LOGIN + "?logout=true";
+        return "redirect:" + Utils.HOME + "?logout=true";
     }
 }

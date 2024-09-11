@@ -12,8 +12,10 @@ The project is organized into the following main components:
 
 - The main application that contains the logic for controlling the laboratory device.
 - it runs on [http://localhost:8090](http://localhost:8090).
-- The application includes a service client, which is used by a service technician for maintenance or control of the
-  device. (Username + Password = `service`)
+- The application includes a **service client**, which is used by a service technician for maintenance or control of the
+  device. Log in credentials:
+    - Username: `service`
+    - Password: `service`
 
 **emulator**
 
@@ -26,6 +28,13 @@ The project is organized into the following main components:
 - This is a shared module that provides services for communication between the client and the hardware (or the
   emulator).
 - It acts as an interface between the software (client) and the actual or simulated hardware (emulator).
+
+## Current State
+
+- The WebSocket connects when the client sends a command.
+- The emulator can send events and receive commands.
+- The emulator features a log page where all commands and events are recorded.
+- Users can log in as a service technician in the client (Username + Password: `service`)
 
 ## Technologies Used
 
