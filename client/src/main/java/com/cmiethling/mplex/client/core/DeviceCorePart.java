@@ -2,6 +2,8 @@ package com.cmiethling.mplex.client.core;
 
 import com.cmiethling.mplex.device.DeviceException;
 import com.cmiethling.mplex.device.api.DeviceCommand;
+import com.cmiethling.mplex.device.message.RequestMessage;
+import com.cmiethling.mplex.device.message.ResultMessage;
 import com.cmiethling.mplex.device.service.EventCommandFactory;
 import com.cmiethling.mplex.device.service.WebSocketService;
 import jakarta.annotation.PreDestroy;
@@ -33,6 +35,17 @@ public class DeviceCorePart {
         closeConnection();
     }
 
+    /**
+     * The application sends a {@link RequestMessage} wrapped as a {@link DeviceCommand} to the hardware (either
+     * simulated or the real) and gets back a {@link ResultMessage}.
+     *
+     * @param command the command
+     * @return the command with the {@link ResultMessage}
+     * @throws DeviceException      if the command could not be sent
+     * @throws ExecutionException   if the {@link ResultMessage} returns with an error or if the command took too
+     * long (TimeoutException)
+     * @throws InterruptedException if the execution was interrupted from outside
+     */
     public <T extends DeviceCommand> T sendCommand(final T command) throws DeviceException, ExecutionException,
             InterruptedException {
         return this.webSocketService.sendCommand(command).get();

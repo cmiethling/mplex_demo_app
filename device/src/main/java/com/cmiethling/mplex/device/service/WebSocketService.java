@@ -1,5 +1,6 @@
 package com.cmiethling.mplex.device.service;
 
+import com.cmiethling.mplex.device.DeviceCommunicationException;
 import com.cmiethling.mplex.device.DeviceException;
 import com.cmiethling.mplex.device.DeviceMessageException;
 import com.cmiethling.mplex.device.api.DeviceCommand;
@@ -25,14 +26,15 @@ public interface WebSocketService {
     /**
      * The application sends a {@link RequestMessage} wrapped as a {@link DeviceCommand} to the hardware (either
      * simulated or the real) and gets back a {@link ResultMessage} as Future. The Future wraps the following
-     * Exceptions: If there is no ResultMessage by the timeout the Future will have a TimeoutException wrapped as an
-     * ExecutionException. If there is a problem with the WebSocket connection >> {@link DeviceException}. If there is a
-     * problem evaluating the result message >> {@link DeviceMessageException}.
+     * Exceptions: If there is no ResultMessage by the timeout the Future will have a TimeoutException wrapped in a
+     * ExecutionException.
      *
      * @param <T>     the type of the device command
      * @param command CommandMessage wrapped as a DeviceCommand to be sent to hardware
      * @return The ResultMessage wrapped as a DeviceCommand or a wrapped Exception
-     * @throws DeviceException if the command cannot be sent
+     * @throws DeviceException if the command cannot be sent: If there is a problem with the WebSocket connection >>
+     *                         {@link DeviceCommunicationException}. If there is a problem evaluating the result
+     *                         message >> {@link DeviceMessageException}.
      */
     <T extends DeviceCommand> Future<T> sendCommand(T command) throws DeviceException;
 

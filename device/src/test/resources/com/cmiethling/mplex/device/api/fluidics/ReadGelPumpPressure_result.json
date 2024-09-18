@@ -5,7 +5,6 @@
   "topic": "ReadHighPressure",
   "error": "NoError",
   "result": {
-    "retVal": 0,
     "pressure": 42.2
   }
 }

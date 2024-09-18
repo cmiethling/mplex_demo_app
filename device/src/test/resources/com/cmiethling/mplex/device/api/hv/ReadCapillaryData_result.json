@@ -5,7 +5,6 @@
   "topic": "ReadCapillaryData",
   "error": "NoError",
   "result": {
-    "retVal": 0,
     "badRuns": 15,
     "capState": 2
   }

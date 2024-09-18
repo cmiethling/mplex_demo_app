@@ -25,6 +25,7 @@ public class ProjectSecurityConfig {
             request.requestMatchers(builder.pattern(Utils.PUBLIC + "/**")).permitAll();
             // so that css in /assets can work
             request.requestMatchers(builder.pattern("/assets/**")).permitAll();
+            request.requestMatchers(builder.pattern("/error")).permitAll();
 
             request.requestMatchers(builder.pattern(Utils.SERVICE_CLIENT + "/**")).authenticated();
             request.requestMatchers(builder.pattern(Utils.LOGIN), builder.pattern(Utils.LOGOUT)).permitAll();

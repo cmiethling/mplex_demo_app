@@ -25,7 +25,7 @@ Author URL: http://w3layouts.com
         <div class="alert alert-warning" th:if="${!#strings.isEmpty(message)}" th:text="${message}"></div>
         <h2>Gel Pump</h2>
         <form method="post" th:action="@{/public/sendGelPumpModeCommand}">
-            <!-- Radio-Buttons für die Auswahl -->
+            <!-- Radio-Buttons-->
             <label>
                 <input name="isOn" type="radio" value="true">
                 On

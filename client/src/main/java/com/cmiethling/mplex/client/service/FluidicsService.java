@@ -31,6 +31,7 @@ public class FluidicsService extends AbstractSubsystem {
     private void errorsEventReceived(final DeviceEventWrapper<ErrorsEvent> eventWrapper) {
         final var event = eventWrapper.getEvent();
         log.info("received {} with {}", event, event.getErrorCode());
+        this.fluidicsStatus.setFluidicsError(event.getErrorCode());
     }
 
     @EventListener
@@ -38,12 +39,16 @@ public class FluidicsService extends AbstractSubsystem {
         final var event = eventWrapper.getEvent();
         log.info("received: {} with isGelPumpOn={}, isGelValveOpen={}",
                 event, event.isGelPumpOn(), event.isGelValveOpen());
+        event.isGelPumpOn().ifPresent(isOn -> this.fluidicsStatus.setGelPumpOn(isOn));
+        event.isGelValveOpen().ifPresent(isOpen -> this.fluidicsStatus.setGelValveOpen(isOpen));
     }
 
     // ################# commands ##########################
     public void sendGelPumpMode(final boolean isOn) throws ExecutionException, InterruptedException, DeviceException {
         final var command = command(SetGelPumpCommand.class);
         command.setOn(isOn);
-        sendCommand(command);
+        final var commandResult = sendCommand(command);
+        // if there is no exception then command is successful
+        this.fluidicsStatus.setGelPumpOn(isOn);
     }
 }
