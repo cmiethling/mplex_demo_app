@@ -49,7 +49,7 @@
             </tr>
         </table>
 
-        <!-- Modal für Event-Details -->
+        <!-- Modal for event-details -->
         <div id="eventDetailsModal" style="display:none; border: 1px solid black; padding: 10px;">
             <h2>Message</h2>
             <p id="eventDetails"></p>
@@ -58,7 +58,6 @@
 
         <script>
             function showEventDetails(row) {
-                // only 1 is not null
                 const type = row.getAttribute("data-type");
                 const event = row.getAttribute("data-event");
                 const request = row.getAttribute("data-request");
@@ -73,7 +72,7 @@
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit',
-                    fractionalSecondDigits: 2 // millis
+                    fractionalSecondDigits: 3 // millis
                 };
                 const formattedTimestamp = timestamp.toLocaleString('de-DE', options);
 
@@ -85,7 +84,7 @@
                 } else if (type === "REQUEST") {
                     message = `${formattedTimestamp}:\n${request}`;
                 } else {
-                    message = null; // Oder eine andere Standardbehandlung, falls erforderlich
+                    message = null;
                 }
 
                 document.getElementById("eventDetails").innerText = message;

@@ -27,11 +27,11 @@ Author URL: http://w3layouts.com
         <form method="post" th:action="@{/public/sendGelPumpModeCommand}">
             <!-- Radio-Buttons-->
             <label>
-                <input name="isOn" type="radio" value="true">
+                <input name="isOn" th:checked="${gelPumpOn ? 'checked' : null}" type="radio" value="true">
                 On
             </label>
             <label>
-                <input checked name="isOn" type="radio" value="false">
+                <input checked name="isOn" th:checked="${!gelPumpOn ? 'checked' : null}" type="radio" value="false">
                 Off
             </label>
             <button>Send</button>

@@ -8,6 +8,7 @@ import com.cmiethling.mplex.device.api.fluidics.SetGelPumpCommand;
 import com.cmiethling.mplex.device.api.fluidics.StatesEvent;
 import com.cmiethling.mplex.device.message.Subsystem;
 import com.cmiethling.mplex.device.websocket.DeviceEventWrapper;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -15,10 +16,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
 
+@Getter
 @Slf4j
 @Service
 public class FluidicsService extends AbstractSubsystem {
 
+    // ################# current states ##########################
     @Autowired
     private FluidicsStatus fluidicsStatus;
 
@@ -47,7 +50,7 @@ public class FluidicsService extends AbstractSubsystem {
     public void sendGelPumpMode(final boolean isOn) throws ExecutionException, InterruptedException, DeviceException {
         final var command = command(SetGelPumpCommand.class);
         command.setOn(isOn);
-        final var commandResult = sendCommand(command);
+        sendCommand(command);
         // if there is no exception then command is successful
         this.fluidicsStatus.setGelPumpOn(isOn);
     }

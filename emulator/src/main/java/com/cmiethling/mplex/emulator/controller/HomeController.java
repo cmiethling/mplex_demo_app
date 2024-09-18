@@ -1,6 +1,5 @@
 package com.cmiethling.mplex.emulator.controller;
 
-import com.cmiethling.mplex.device.DeviceException;
 import com.cmiethling.mplex.device.api.SubsystemError;
 import com.cmiethling.mplex.device.api.fluidics.FluidicsError;
 import com.cmiethling.mplex.device.api.hv.HighVoltageError;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +43,7 @@ public class HomeController {
                 Subsystem.HIGH_VOLTAGE, HighVoltageError.values()
         );
 
+        // for dropdown menus
         model.addAttribute("errorTypesMap", errorTypesMap);
 
         return "home";
@@ -54,7 +53,7 @@ public class HomeController {
     public String sendEvent(@RequestParam final Subsystem subsystem,
                             // TODO remove (required = false) when persisting
                             @RequestParam(required = false) final String currentValue,
-                            @RequestParam final String newValue) throws IOException, DeviceException {
+                            @RequestParam final String newValue) {
         switch (subsystem) {
             case FLUIDICS -> this.fluidicsService.processError(currentValue, newValue);
             case HIGH_VOLTAGE -> this.highVoltageService.processError(currentValue, newValue);

@@ -19,7 +19,6 @@ import java.util.concurrent.ExecutionException;
 public class HomeController {
     @Autowired
     private DeviceCorePart deviceCorePart;
-
     @Autowired
     private FluidicsService fluidicsService;
     @Autowired
@@ -29,6 +28,8 @@ public class HomeController {
     public String displayHome(@RequestParam(required = false) final boolean logout, final Model model) {
         final var msg = logout ? "Successfully logged out." : null;
         model.addAttribute("message", msg);
+
+        model.addAttribute("gelPumpOn", this.fluidicsService.getFluidicsStatus().isGelPumpOn());
         return Utils.HOME_HTML;
     }
 

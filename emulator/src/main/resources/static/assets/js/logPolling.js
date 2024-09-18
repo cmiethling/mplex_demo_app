@@ -3,11 +3,11 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch('/logs')
             .then(response => response.text())
             .then(html => {
-            // Temporäres Element erstellen, um das HTML zu parsen
+            // create temporary element to parse HTML
             let tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
 
-            // Nur die `<tr>`-Elemente extrahieren
+            // extract only `<tr>`-elements
             let tableRows = tempDiv.querySelectorAll('tbody tr');
             let newTableContent = '';
 
@@ -15,11 +15,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 newTableContent += row.outerHTML;
             });
 
-            // Nur die neuen Tabellenzeilen einfügen
+            // add all table rows
             document.querySelector(".table tbody").innerHTML = newTableContent;
             //            console.log(newTableContent);
         });
     }
 
-    setInterval(fetchLogs, 2000); // update every second
+    setInterval(fetchLogs, 2000); // update every x seconds
 });
