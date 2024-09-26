@@ -5,7 +5,7 @@ import com.cmiethling.mplex.device.api.AbstractDeviceEvent;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
 import lombok.Getter;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 /**
  * If there is an error or if the error is cleared this event is sent by the device.

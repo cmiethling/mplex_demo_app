@@ -1,7 +1,7 @@
 package com.cmiethling.mplex.device.message;
 
 import com.cmiethling.mplex.device.DeviceMessageException;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 import java.util.*;
 import java.util.Map.Entry;

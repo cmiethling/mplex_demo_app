@@ -2,7 +2,7 @@ package com.cmiethling.mplex.device.service;
 
 import com.cmiethling.mplex.device.api.DeviceCommand;
 import com.cmiethling.mplex.device.api.DeviceEvent;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 /**

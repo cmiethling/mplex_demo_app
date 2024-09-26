@@ -5,7 +5,7 @@ import com.cmiethling.mplex.device.api.hv.ErrorsEvent;
 import com.cmiethling.mplex.device.api.hv.HighVoltageError;
 import com.cmiethling.mplex.device.message.Subsystem;
 import com.cmiethling.mplex.emulator.model.HighVoltageStatus;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

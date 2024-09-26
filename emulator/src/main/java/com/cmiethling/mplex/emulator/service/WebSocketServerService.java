@@ -4,7 +4,7 @@ import com.cmiethling.mplex.device.DeviceException;
 import com.cmiethling.mplex.device.DeviceMessageException;
 import com.cmiethling.mplex.device.message.*;
 import com.cmiethling.mplex.device.service.DeviceMessageService;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

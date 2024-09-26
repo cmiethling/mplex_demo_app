@@ -1,7 +1,7 @@
 package com.cmiethling.mplex.device.api;
 
 import com.cmiethling.mplex.device.message.ResultMessage;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 import java.util.UUID;
 

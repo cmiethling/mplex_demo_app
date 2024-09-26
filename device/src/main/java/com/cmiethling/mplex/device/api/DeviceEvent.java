@@ -6,7 +6,7 @@ import com.cmiethling.mplex.device.api.fluidics.StatesEvent;
 import com.cmiethling.mplex.device.api.test.ExampleEvent;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 /**
  * This interface describes an event that could be sent by the device.

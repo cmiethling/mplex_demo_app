@@ -4,7 +4,7 @@ import com.cmiethling.mplex.device.DeviceCommandException;
 import com.cmiethling.mplex.device.DeviceMessageException;
 import com.cmiethling.mplex.device.message.ResultMessage;
 import lombok.Getter;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 /**
  * Fetch the current gel pump pressure.

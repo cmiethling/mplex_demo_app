@@ -3,7 +3,7 @@ package com.cmiethling.mplex.emulator.service;
 import com.cmiethling.mplex.device.api.SubsystemError;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractSubsystem {

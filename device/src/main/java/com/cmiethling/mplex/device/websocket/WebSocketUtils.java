@@ -5,7 +5,7 @@ import com.cmiethling.mplex.device.message.DeviceMessage;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.RequestMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Configuration;
 

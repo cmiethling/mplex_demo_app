@@ -5,7 +5,7 @@ import com.cmiethling.mplex.device.DeviceMessageException;
 import com.cmiethling.mplex.device.message.RequestMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 import java.util.UUID;

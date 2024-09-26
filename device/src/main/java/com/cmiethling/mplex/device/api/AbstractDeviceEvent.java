@@ -3,7 +3,7 @@ package com.cmiethling.mplex.device.api;
 import com.cmiethling.mplex.device.DeviceMessageException;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 /**
  * Base class for implementing device events. Implementing classes of device events should extend this class and add

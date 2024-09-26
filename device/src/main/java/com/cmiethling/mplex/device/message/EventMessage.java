@@ -2,7 +2,7 @@ package com.cmiethling.mplex.device.message;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 /**
  * This class represents an event that is sent from the device interface to the application. Event message do not have

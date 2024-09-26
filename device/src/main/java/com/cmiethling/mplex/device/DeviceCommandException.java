@@ -2,7 +2,7 @@ package com.cmiethling.mplex.device;
 
 import com.cmiethling.mplex.device.message.AbstractDeviceMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 /**
  * Creates a new exception for a known command error.

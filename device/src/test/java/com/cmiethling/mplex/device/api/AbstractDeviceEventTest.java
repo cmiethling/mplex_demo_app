@@ -1,7 +1,7 @@
 package com.cmiethling.mplex.device.api;
 
 import com.cmiethling.mplex.device.message.EventMessage;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 

@@ -3,7 +3,7 @@ package com.cmiethling.mplex.device.api.fluidics;
 import com.cmiethling.mplex.device.DeviceMessageException;
 import com.cmiethling.mplex.device.message.EventMessage;
 import lombok.Getter;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 

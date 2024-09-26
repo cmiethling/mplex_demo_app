@@ -5,7 +5,7 @@ import com.cmiethling.mplex.device.DeviceMessageException;
 import com.cmiethling.mplex.device.message.RequestMessage;
 import com.cmiethling.mplex.device.message.ResultMessage;
 import lombok.Getter;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import lombok.Setter;
 
 /**

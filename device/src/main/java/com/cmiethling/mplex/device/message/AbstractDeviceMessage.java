@@ -1,7 +1,7 @@
 package com.cmiethling.mplex.device.message;
 
 import com.fasterxml.jackson.annotation.*;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 import java.util.UUID;
