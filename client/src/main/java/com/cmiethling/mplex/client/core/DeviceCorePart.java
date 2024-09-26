@@ -43,7 +43,7 @@ public class DeviceCorePart {
      * @return the command with the {@link ResultMessage}
      * @throws DeviceException      if the command could not be sent
      * @throws ExecutionException   if the {@link ResultMessage} returns with an error or if the command took too
-     * long (TimeoutException)
+     *                              long (TimeoutException)
      * @throws InterruptedException if the execution was interrupted from outside
      */
     public <T extends DeviceCommand> T sendCommand(final T command) throws DeviceException, ExecutionException,
@@ -63,5 +63,9 @@ public class DeviceCorePart {
     public boolean closeConnection() throws ExecutionException, InterruptedException,
             TimeoutException {
         return this.webSocketService.sendClose().get(1, TimeUnit.SECONDS);
+    }
+
+    public boolean isConnected() {
+        return this.webSocketService.isConnected();
     }
 }

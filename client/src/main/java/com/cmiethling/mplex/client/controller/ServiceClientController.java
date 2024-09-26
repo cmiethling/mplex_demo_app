@@ -7,6 +7,7 @@ import com.cmiethling.mplex.device.DeviceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,8 +27,20 @@ public class ServiceClientController {
     @RequestMapping(Utils.SERVICE_CLIENT)
     public String displayServiceClient(final Model model) {
         model.addAttribute("gelPumpOn", this.fluidicsService.getFluidicsStatus().isGelPumpOn());
+        addEvents(model);
 
         return Utils.SERVICE_CLIENT_HTML;
+    }
+
+    @GetMapping(Utils.SERVICE_CLIENT + "/events")
+    public String getEvents(final Model model) {
+        addEvents(model);
+        return "%s :: eventsTable".formatted(Utils.SERVICE_CLIENT); // only return th:fragment="eventsTable"
+    }
+
+    private void addEvents(final Model model) {
+        model.addAttribute("isConnected", this.deviceCorePart.isConnected());
+        model.addAttribute("fluidicsError", this.fluidicsService.getFluidicsStatus().getFluidicsError());
     }
 
     @PostMapping(Utils.SERVICE_CLIENT + "/sendGelPumpModeCommand2")

@@ -76,6 +76,13 @@ public final class WebSocketServiceImpl implements WebSocketService {
     }
 
     @Override
+    public boolean isConnected() {
+        return this.webSocketClient != null
+                && !this.webSocketClient.isOutputClosed()
+                && !this.webSocketClient.isInputClosed();
+    }
+
+    @Override
     public <T extends DeviceCommand> Future<T> sendCommand(final T command) throws DeviceException {
 
         // before we create a task for sending the message we need to perform same preparations

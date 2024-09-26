@@ -69,4 +69,6 @@ public interface WebSocketService {
      * @return async true if WebSocket connection has been closed
      */
     Future<Boolean> sendClose();
+
+    boolean isConnected();
 }
