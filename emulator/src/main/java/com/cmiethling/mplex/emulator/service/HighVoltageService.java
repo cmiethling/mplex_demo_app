@@ -21,14 +21,10 @@ public class HighVoltageService extends AbstractSubsystem {
 
     public SubsystemError getHighVoltageError() {return this.highVoltageStatus.getHighVoltageError();}
 
-    public void processError(@NonNull final String currentError, @NonNull final String newError) {
+    public void processError(@NonNull final String newError) {
         final var error = HighVoltageError.valueOf(newError);
         final var event = createErrorEvent(error, ErrorEvent.TOPIC, ErrorEvent.ERRORCODE);
-
-        if (!newError.equals(currentError)) {
-            this.highVoltageStatus.setHighVoltageError(error);
-            sendEvent(event);
-        } else
-            logEventNotSent(event, NEW_STATE_EQUALS_CURRENT_STATE);
+        this.highVoltageStatus.setHighVoltageError(error);
+        sendEvent(event);
     }
 }

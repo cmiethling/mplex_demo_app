@@ -21,13 +21,10 @@ public class FluidicsService extends AbstractSubsystem {
 
     public SubsystemError getFluidicsError() {return this.fluidicsStatus.getFluidicsError();}
 
-    public void processError(@NonNull final String currentError, @NonNull final String newError) {
+    public void processError(@NonNull final String newError) {
         final var error = FluidicsError.valueOf(newError);
         final var event = createErrorEvent(error, ErrorEvent.TOPIC, ErrorEvent.ERRORCODE);
-        if (!newError.equals(currentError)) {
-            this.fluidicsStatus.setFluidicsError(error);
-            sendEvent(event);
-        } else
-            logEventNotSent(event, NEW_STATE_EQUALS_CURRENT_STATE);
+        this.fluidicsStatus.setFluidicsError(error);
+        sendEvent(event);
     }
 }

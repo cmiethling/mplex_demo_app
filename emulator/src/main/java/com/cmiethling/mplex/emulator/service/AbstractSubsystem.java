@@ -3,11 +3,10 @@ package com.cmiethling.mplex.emulator.service;
 import com.cmiethling.mplex.device.api.SubsystemError;
 import com.cmiethling.mplex.device.message.EventMessage;
 import com.cmiethling.mplex.device.message.Subsystem;
-import org.springframework.lang.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 
 public abstract class AbstractSubsystem {
-    protected static final String NEW_STATE_EQUALS_CURRENT_STATE = "new state didn't change the current state.";
 
     private final Subsystem subsystem;
 
@@ -34,10 +33,6 @@ public abstract class AbstractSubsystem {
     protected void sendEvent(final EventMessage event) {
         final var errorMsg = this.webSocketServerService.broadcastEvent(event);
         this.logService.logEvent(event, errorMsg);
-    }
-
-    protected void logEventNotSent(final EventMessage event, final String reason) {
-        this.logService.logEvent(event, "event not sent: " + reason);
     }
 }
 

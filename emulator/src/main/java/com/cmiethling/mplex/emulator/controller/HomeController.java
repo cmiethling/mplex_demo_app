@@ -51,12 +51,10 @@ public class HomeController {
 
     @PostMapping("/send-event")
     public String sendEvent(@RequestParam final Subsystem subsystem,
-                            // TODO remove (required = false) when persisting
-                            @RequestParam(required = false) final String currentValue,
                             @RequestParam final String newValue) {
         switch (subsystem) {
-            case FLUIDICS -> this.fluidicsService.processError(currentValue, newValue);
-            case HIGH_VOLTAGE -> this.highVoltageService.processError(currentValue, newValue);
+            case FLUIDICS -> this.fluidicsService.processError(newValue);
+            case HIGH_VOLTAGE -> this.highVoltageService.processError(newValue);
             default -> throw new IllegalArgumentException("invalid subsystem: " + subsystem);
         }
         return "redirect:/home";
