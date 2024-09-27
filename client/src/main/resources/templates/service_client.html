@@ -32,7 +32,6 @@ Author URL: http://w3layouts.com
         <tr>
             <th>Subsystem</th>
             <th>Device</th>
-            <th>Current</th>
             <th>New</th>
             <th></th>
         </tr>
@@ -41,28 +40,15 @@ Author URL: http://w3layouts.com
         <tr>
             <td>FLUIDICS</td>
             <td>Gel Pump</td>
-            <td>
-                <div>
-                    <span th:if="${gelPumpOn}">
-                        <!-- green tick -->
-                        <i class="bi bi-check" style="color: green;"></i>
-                    </span>
-                    <span th:if="${!gelPumpOn}">
-                        <!-- red cross -->
-                        <i class="bi bi-x" style="color: red;"></i>
-                    </span>
-                </div>
-            </td>
             <form method="post" th:action="@{/service_client/sendGelPumpModeCommand2}">
                 <td>
                     <label>
-                        <input name="isOn" th:checked="${gelPumpOn ? 'checked' : null}" type="radio" value="true">
-                        On
+                        <input name="isOn" th:checked="${fluidicsStatus.gelPumpOn ? 'checked' : null}"
+                               type="radio" value="true"> On
                     </label>
                     <label>
-                        <input checked name="isOn" th:checked="${!gelPumpOn ? 'checked' : null}" type="radio"
-                               value="false">
-                        Off
+                        <input name="isOn" th:checked="${!fluidicsStatus.gelPumpOn ? 'checked' : null}"
+                               type="radio" value="false"> Off
                     </label>
                 </td>
                 <td>
@@ -73,7 +59,7 @@ Author URL: http://w3layouts.com
         </tbody>
     </table>
 
-    <h4>Events</h4>
+    <h4>Current States</h4>
     <div th:fragment="eventsTable">
         <div>
             <span>Connection to device established: </span>
@@ -91,14 +77,14 @@ Author URL: http://w3layouts.com
             <tr>
                 <th>Subsystem</th>
                 <th>Topic</th>
-                <th>Current</th>
+                <th>Current State</th>
             </tr>
             </thead>
             <tbody id="events">
-            <tr>
-                <td>FLUIDICS</td>
-                <td>Errors</td>
-                <td th:text="${fluidicsError}"></td>
+            <tr th:each="entry : ${fluidicsStatus.entries}">
+                <td th:text="${entry.subsystem}"></td>
+                <td th:text="${entry.topic}"></td>
+                <td th:text="${entry.currentState}"></td>
             </tr>
             </tbody>
         </table>
@@ -118,6 +104,7 @@ Author URL: http://w3layouts.com
 
 <!-- import necessary scripts for polling-->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!--suppress HtmlUnknownTarget -->
 <script src="/assets/js/eventPolling.js"></script>
 </body>
 </html>

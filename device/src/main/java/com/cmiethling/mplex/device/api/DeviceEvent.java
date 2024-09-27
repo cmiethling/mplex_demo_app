@@ -1,7 +1,7 @@
 package com.cmiethling.mplex.device.api;
 
 import com.cmiethling.mplex.device.DeviceMessageException;
-import com.cmiethling.mplex.device.api.fluidics.ErrorsEvent;
+import com.cmiethling.mplex.device.api.fluidics.ErrorEvent;
 import com.cmiethling.mplex.device.api.fluidics.StatesEvent;
 import com.cmiethling.mplex.device.api.test.ExampleEvent;
 import com.cmiethling.mplex.device.message.EventMessage;
@@ -25,13 +25,13 @@ public interface DeviceEvent {
     static DeviceEvent of(@NonNull final Subsystem subsystem, @NonNull final String topic) throws DeviceMessageException {
         return switch (subsystem) {
             case FLUIDICS -> switch (topic) {
-                case ErrorsEvent.TOPIC -> new ErrorsEvent();
+                case ErrorEvent.TOPIC -> new ErrorEvent();
                 case StatesEvent.TOPIC -> new StatesEvent();
                 default -> throwInvalidTopicDMException(subsystem, topic);
             };
             case HIGH_VOLTAGE -> switch (topic) {
-                case com.cmiethling.mplex.device.api.hv.ErrorsEvent.TOPIC ->
-                        new com.cmiethling.mplex.device.api.hv.ErrorsEvent();
+                case com.cmiethling.mplex.device.api.hv.ErrorEvent.TOPIC ->
+                        new com.cmiethling.mplex.device.api.hv.ErrorEvent();
                 default -> throwInvalidTopicDMException(subsystem, topic);
             };
             case TEST -> switch (topic) {

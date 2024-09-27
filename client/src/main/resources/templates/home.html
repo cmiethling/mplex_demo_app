@@ -27,22 +27,16 @@ Author URL: http://w3layouts.com
         <form method="post" th:action="@{/public/sendGelPumpModeCommand}">
             <!-- Radio-Buttons-->
             <label>
-                <input name="isOn" th:checked="${gelPumpOn ? 'checked' : null}" type="radio" value="true">
-                On
+                <input name="isOn" th:checked="${fluidicsStatus.gelPumpOn ? 'checked' : null}"
+                       type="radio" value="true"> On
             </label>
             <label>
-                <input checked name="isOn" th:checked="${!gelPumpOn ? 'checked' : null}" type="radio" value="false">
-                Off
+                <input name="isOn" th:checked="${!fluidicsStatus.gelPumpOn ? 'checked' : null}"
+                       type="radio" value="false"> Off
             </label>
             <button>Send</button>
         </form>
     </div>
 </section>
-
-
-<!-- import scripts.html-->
-<!--<div th:replace="~{template :: scripts}"></div>-->
-<!-- //import scripts.html-->
-
 </body>
 </html>

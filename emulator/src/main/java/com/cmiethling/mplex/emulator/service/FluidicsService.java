@@ -1,7 +1,7 @@
 package com.cmiethling.mplex.emulator.service;
 
 import com.cmiethling.mplex.device.api.SubsystemError;
-import com.cmiethling.mplex.device.api.fluidics.ErrorsEvent;
+import com.cmiethling.mplex.device.api.fluidics.ErrorEvent;
 import com.cmiethling.mplex.device.api.fluidics.FluidicsError;
 import com.cmiethling.mplex.device.message.Subsystem;
 import com.cmiethling.mplex.emulator.model.FluidicsStatus;
@@ -23,7 +23,7 @@ public class FluidicsService extends AbstractSubsystem {
 
     public void processError(@NonNull final String currentError, @NonNull final String newError) {
         final var error = FluidicsError.valueOf(newError);
-        final var event = createErrorEvent(error, ErrorsEvent.TOPIC, ErrorsEvent.ERRORCODE);
+        final var event = createErrorEvent(error, ErrorEvent.TOPIC, ErrorEvent.ERRORCODE);
         if (!newError.equals(currentError)) {
             this.fluidicsStatus.setFluidicsError(error);
             sendEvent(event);

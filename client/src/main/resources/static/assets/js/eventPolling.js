@@ -1,8 +1,4 @@
 $(document).ready(function () {
-    //    // Get the CSRF token and header from the meta tags
-    //    var csrfToken = $('meta[name="_csrf"]').attr('content');
-    //    var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
-
     function updateEventsTable() {
         $.ajax({
             url: '/service_client/events', // API-Endpoint, will return only events table

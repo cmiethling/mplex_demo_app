@@ -3,7 +3,7 @@ package com.cmiethling.mplex.client.service;
 import com.cmiethling.mplex.client.AbstractSubsystem;
 import com.cmiethling.mplex.client.model.FluidicsStatus;
 import com.cmiethling.mplex.device.DeviceException;
-import com.cmiethling.mplex.device.api.fluidics.ErrorsEvent;
+import com.cmiethling.mplex.device.api.fluidics.ErrorEvent;
 import com.cmiethling.mplex.device.api.fluidics.SetGelPumpCommand;
 import com.cmiethling.mplex.device.api.fluidics.StatesEvent;
 import com.cmiethling.mplex.device.message.Subsystem;
@@ -31,10 +31,10 @@ public class FluidicsService extends AbstractSubsystem {
 
     // ################# events ##########################
     @EventListener
-    private void errorsEventReceived(final DeviceEventWrapper<ErrorsEvent> eventWrapper) {
+    private void errorEventReceived(final DeviceEventWrapper<ErrorEvent> eventWrapper) {
         final var event = eventWrapper.getEvent();
         log.info("received {} with {}", event, event.getErrorCode());
-        this.fluidicsStatus.setFluidicsError(event.getErrorCode());
+        this.fluidicsStatus.setErrorsEvent(event);
     }
 
     @EventListener
@@ -42,8 +42,8 @@ public class FluidicsService extends AbstractSubsystem {
         final var event = eventWrapper.getEvent();
         log.info("received: {} with isGelPumpOn={}, isGelValveOpen={}",
                 event, event.isGelPumpOn(), event.isGelValveOpen());
-        event.isGelPumpOn().ifPresent(isOn -> this.fluidicsStatus.setGelPumpOn(isOn));
-        event.isGelValveOpen().ifPresent(isOpen -> this.fluidicsStatus.setGelValveOpen(isOpen));
+        event.isGelPumpOn().ifPresent(isOn -> this.fluidicsStatus.setGelPump(isOn));
+        event.isGelValveOpen().ifPresent(isOpen -> this.fluidicsStatus.setGelValve(isOpen));
     }
 
     // ################# commands ##########################
@@ -51,7 +51,8 @@ public class FluidicsService extends AbstractSubsystem {
         final var command = command(SetGelPumpCommand.class);
         command.setOn(isOn);
         sendCommand(command);
+        // TODO remove once StatesEvent is established
         // if there is no exception then command is successful
-        this.fluidicsStatus.setGelPumpOn(isOn);
+        this.fluidicsStatus.setGelPump(isOn);
     }
 }

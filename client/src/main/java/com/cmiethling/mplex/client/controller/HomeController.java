@@ -29,7 +29,7 @@ public class HomeController {
         final var msg = logout ? "Successfully logged out." : null;
         model.addAttribute("message", msg);
 
-        model.addAttribute("gelPumpOn", this.fluidicsService.getFluidicsStatus().isGelPumpOn());
+        model.addAttribute("fluidicsStatus", this.fluidicsService.getFluidicsStatus());
         return Utils.HOME_HTML;
     }
 

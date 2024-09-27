@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.concurrent.ExecutionException;
@@ -24,11 +23,9 @@ public class ServiceClientController {
     @Autowired
     private FluidicsService fluidicsService;
 
-    @RequestMapping(Utils.SERVICE_CLIENT)
+    @GetMapping(Utils.SERVICE_CLIENT)
     public String displayServiceClient(final Model model) {
-        model.addAttribute("gelPumpOn", this.fluidicsService.getFluidicsStatus().isGelPumpOn());
         addEvents(model);
-
         return Utils.SERVICE_CLIENT_HTML;
     }
 
@@ -40,7 +37,7 @@ public class ServiceClientController {
 
     private void addEvents(final Model model) {
         model.addAttribute("isConnected", this.deviceCorePart.isConnected());
-        model.addAttribute("fluidicsError", this.fluidicsService.getFluidicsStatus().getFluidicsError());
+        model.addAttribute("fluidicsStatus", this.fluidicsService.getFluidicsStatus());
     }
 
     @PostMapping(Utils.SERVICE_CLIENT + "/sendGelPumpModeCommand2")

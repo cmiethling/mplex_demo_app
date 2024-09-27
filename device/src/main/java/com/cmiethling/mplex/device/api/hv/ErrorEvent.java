@@ -1,7 +1,9 @@
-package com.cmiethling.mplex.device.api.fluidics;
+package com.cmiethling.mplex.device.api.hv;
 
 import com.cmiethling.mplex.device.DeviceMessageException;
+import com.cmiethling.mplex.device.api.AbstractDeviceEvent;
 import com.cmiethling.mplex.device.message.EventMessage;
+import com.cmiethling.mplex.device.message.Subsystem;
 import lombok.Getter;
 import org.springframework.lang.NonNull;
 
@@ -9,18 +11,18 @@ import org.springframework.lang.NonNull;
  * If there is an error or if the error is cleared this event is sent by the device.
  */
 @Getter
-public final class ErrorsEvent extends AbstractFluidicsDeviceEvent {
+public final class ErrorEvent extends AbstractDeviceEvent {
 
     public static final String TOPIC = "errors";
     public static final String ERRORCODE = "errorcode";
 
-    private FluidicsError errorCode;
+    private HighVoltageError errorCode;
 
     /**
      * Creates a new event object.
      */
-    public ErrorsEvent() {
-        super(TOPIC);
+    public ErrorEvent() {
+        super(Subsystem.HIGH_VOLTAGE, TOPIC);
     }
 
     @Override
@@ -28,7 +30,7 @@ public final class ErrorsEvent extends AbstractFluidicsDeviceEvent {
         super.fromEventMessage(message);
 
         final var code = message.parameters().getRequiredInt(ERRORCODE);
-        this.errorCode = FluidicsError.ofCode(code)
+        this.errorCode = HighVoltageError.ofCode(code)
                 .orElseThrow(() -> new DeviceMessageException("eventUnknownErrorCode: message=%s, code=%s".formatted(message, code)));
     }
 }
