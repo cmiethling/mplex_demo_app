@@ -21,9 +21,13 @@
 
     <properties>
         <java.version>21</java.version>
-        <!-- <spring.version>${project.parent.version}</spring.version> geht leider nicht!-->
+        <!-- <spring.version>${project.parent.version}</spring.version> unfortunately not working!-->
         <spring.version>3.3.4</spring.version>
         <thymeleaf.extras.springsecurity6.version>3.1.2.RELEASE</thymeleaf.extras.springsecurity6.version>
+        <!-- OpenAPI + Generator -->
+        <springdoc.version>2.6.0</springdoc.version>
+        <openapi-generator.version>7.9.0</openapi-generator.version>
+        <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
     </properties>
 
     <distributionManagement>
@@ -37,12 +41,10 @@
 
     <!-- All modules are build with this reactor. -->
     <modules>
-        <!--        <module>commons</module>-->
-        <!--        <module>script</module>-->
         <module>device</module>
         <module>emulator</module>
         <module>client</module>
-        <!--        <module>controller</module>-->
+        <module>client-api</module>
     </modules>
 
     <dependencyManagement>
@@ -57,17 +59,11 @@
                 <artifactId>mplex-device</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!--            <dependency>-->
-            <!--                <groupId>${project.groupId}</groupId>-->
-            <!--                <artifactId>modaplex-commons</artifactId>-->
-            <!--                <version>${project.version}</version>-->
-            <!--            </dependency>-->
-            <!--            <dependency>-->
-            <!--                <groupId>${project.groupId}</groupId>-->
-            <!--                <artifactId>mplex-script</artifactId>-->
-            <!--                <version>${project.version}</version>-->
-            <!--            </dependency>-->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>client-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Spring Boot dependencies -->
             <dependency>
@@ -98,6 +94,14 @@
                 <artifactId>spring-boot-starter-validation</artifactId>
                 <version>${spring.version}</version>
             </dependency>
+
+            <!-- OpenAPI v3-->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+
             <!-- Web Socket Server (emulator)-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
