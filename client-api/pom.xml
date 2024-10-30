@@ -13,12 +13,57 @@
 
     <name>Client API</name>
 
+    <properties>
+        <openapi-generator.schemadir>${project.basedir}/src/main/resources/schema</openapi-generator.schemadir>
+        <openapi-generator.modelPackage>${openapi-generator.package}.model</openapi-generator.modelPackage>
+    </properties>
+
     <dependencies>
         <!-- OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
+        <!-- OpenAPI Generator -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+        </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <!-- OpenAPI Generator -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>fluidics</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${openapi-generator.schemadir}/fluidics.yaml</inputSpec>
+                            <modelPackage>${openapi-generator.modelPackage}.fluidics</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>hv</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${openapi-generator.schemadir}/hv.yaml</inputSpec>
+                            <modelPackage>${openapi-generator.modelPackage}.hv</modelPackage>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

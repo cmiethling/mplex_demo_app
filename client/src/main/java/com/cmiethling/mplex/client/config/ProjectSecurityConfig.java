@@ -29,6 +29,12 @@ public class ProjectSecurityConfig {
 
             request.requestMatchers(builder.pattern(Utils.SERVICE_CLIENT + "/**")).authenticated();
             request.requestMatchers(builder.pattern(Utils.LOGIN), builder.pattern(Utils.LOGOUT)).permitAll();
+            // for OpenAPI
+            request.requestMatchers(
+                    builder.pattern("/api-docs/**"),
+                    builder.pattern("/swagger-ui/**"),
+                    builder.pattern("/api/**")
+            ).permitAll();
         });
         http.httpBasic(Customizer.withDefaults());
 
@@ -36,7 +42,11 @@ public class ProjectSecurityConfig {
                 .failureUrl(Utils.LOGIN + "?error=true").permitAll());
 
         // all POSTS in home controller are allowed
-        http.csrf(csrfConfigurer -> csrfConfigurer.ignoringRequestMatchers(builder.pattern(Utils.PUBLIC + "/**")));
+        http.csrf(csrfConfigurer -> {
+                    csrfConfigurer.ignoringRequestMatchers(builder.pattern(Utils.PUBLIC + "/**"));
+                    csrfConfigurer.ignoringRequestMatchers(builder.pattern("/api/**"));
+                }
+        );
         return http.build();
     }
 

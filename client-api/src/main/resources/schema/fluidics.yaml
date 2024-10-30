@@ -1,0 +1,62 @@
+openapi: 3.0.1
+info:
+  title: Fluidics Commands API
+  description: API to interact with the fluidics subsystem commands
+  version: 1.0.0
+
+#servers:
+#  - url: http://localhost:8080/api
+
+paths:
+  /api/fluidics/SetGelPump:
+    post:
+      tags:
+        - fluidics
+      summary: Send SetGelPump request to the fluidics subsystem
+      operationId: sendSetGelPumpCommand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetGelPumpRequest'
+      responses:
+        '200':
+          description: Result of SetGelPump command
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetGelPumpResponse'
+
+components:
+  schemas:
+    SetGelPumpRequest:
+      allOf:
+        - $ref: 'base.yaml#/components/schemas/BaseRequest'
+        - type: object
+          properties:
+            topic:
+              type: string
+              enum: [ SetGelPump ]
+            parameters:
+              type: object
+              properties:
+                isOn:
+                  type: boolean
+                  description: Indicates whether the gel pump should be turned on
+
+    SetGelPumpResponse:
+      allOf:
+        - $ref: 'base.yaml#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            topic:
+              type: string
+              enum: [ SetGelPump ]
+            result:
+              type: object
+              properties:
+                isOn:
+                  type: boolean
+                  description: The status of the pump after the command
+                  example: false

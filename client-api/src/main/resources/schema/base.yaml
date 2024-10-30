@@ -1,0 +1,49 @@
+openapi: 3.0.1
+info:
+  title: Base API
+  description: Base definitions for common components and paths
+  version: 1.0.0
+
+components:
+  schemas:
+    BaseRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [ request ]
+        subsystem:
+          type: string
+          enum: [ fluidics, hv ]
+        id:
+          type: string
+          format: uuid
+        topic:
+          type: string
+          example: ""
+        parameters:
+          type: object
+          example: { }
+
+    BaseResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [ result ]
+        subsystem:
+          type: string
+          enum: [ fluidics, hv ]
+        id:
+          type: string
+          format: uuid
+        topic:
+          type: string
+          example: ""
+        error:
+          type: string
+          enum: [ noError, invalidSubsystem, invalidTopic, invalidParameters, error ]
+          example: noError
+        result:
+          type: object
+          example: { }

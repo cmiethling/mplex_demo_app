@@ -28,6 +28,8 @@
         <springdoc.version>2.6.0</springdoc.version>
         <openapi-generator.version>7.9.0</openapi-generator.version>
         <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
+        <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
+        <openapi-generator.package>com.cmiethling.mplex.client_api.openapi</openapi-generator.package>
     </properties>
 
     <distributionManagement>
@@ -101,6 +103,26 @@
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
+            <!-- OpenAPI Generator -->
+            <!-- so generated test deps are found (openapi-generator-maven-plugin is generating)-->
+            <dependency>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator</artifactId>
+                <version>${openapi-generator.version}</version>
+                <!-- XXX because Spring boot uses logback...-->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-simple</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- otherwise import org.openapitools.jackson.nullable.JsonNullable; won't be found-->
+            <dependency>
+                <groupId>org.openapitools</groupId>
+                <artifactId>jackson-databind-nullable</artifactId>
+                <version>${jackson-databind-nullable.version}</version>
+            </dependency>
 
             <!-- Web Socket Server (emulator)-->
             <dependency>
@@ -145,8 +167,64 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                 </plugin>
+
+                <!-- OpenAPI Generator -->
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi-generator.version}</version>
+                    <configuration>
+                        <!-- configuration for all APIs -->
+                        <generatorName>spring</generatorName>
+                        <generateApiDocumentation>true</generateApiDocumentation>
+                        <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+                        <apiPackage>${openapi-generator.package}.api</apiPackage>
+                        <output>${project.build.directory}/generated-sources/openapi</output>
+                        <configOptions>
+                            <delegatePattern>true</delegatePattern>
+                            <useSpringBoot3>true</useSpringBoot3>
+                            <useSwaggerUI>true</useSwaggerUI>
+                            <useSpringController>true</useSpringController>
+                            <interfaceOnly>true</interfaceOnly>
+                            <useTags>true</useTags>
+                            <dateLibrary>java8</dateLibrary>
+                            <additionalModelTypeAnnotations>
+                                @lombok.Setter
+                                @lombok.Getter
+                                @lombok.RequiredArgsConstructor
+                                <!-- not working... @lombok.SneakyThrows-->
+                            </additionalModelTypeAnnotations>
+                        </configOptions>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
 
+    <!-- OpenAPI: only remove generated sources -->
+    <profiles>
+        <profile>
+            <id>clean-generated</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>${build-helper-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>clean-generated-sources</id>
+                                <phase>clean</phase>
+                                <configuration>
+                                    <directories>
+                                        <directory>${project.build.directory}/generated-sources</directory>
+                                    </directories>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

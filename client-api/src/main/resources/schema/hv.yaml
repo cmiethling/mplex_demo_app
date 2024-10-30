@@ -1,0 +1,67 @@
+openapi: 3.0.1
+info:
+  title: High Voltage Commands API
+  description: API to interact with the high voltage subsystem commands
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /api/fluidics/ReadCapillaryData:
+    post:
+      tags:
+        - hv
+      summary: Fetch the data for one capillary
+      operationId: sendReadCapillaryDataCommand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReadCapillaryDataRequest'
+      responses:
+        '200':
+          description: Result of ReadCapillaryData command
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadCapillaryDataResponse'
+
+components:
+  schemas:
+    ReadCapillaryDataRequest:
+      allOf:
+        - $ref: 'base.yaml#/components/schemas/BaseRequest'
+        - type: object
+          properties:
+            topic:
+              type: string
+              enum: [ ReadCapillaryData ]
+            parameters:
+              type: object
+              properties:
+                index:
+                  type: number
+                  description: Which capillary
+
+    ReadCapillaryDataResponse:
+      allOf:
+        - $ref: 'base.yaml#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            topic:
+              type: string
+              enum: [ ReadCapillaryData ]
+            result:
+              type: object
+              properties:
+                capState:
+                  type: string
+                  description: The status of the capillary
+                  example: good
+                  enum: [ good, bad, unknown ]
+                badRuns:
+                  type: number
+                  description: The number of bad runs this capillary had so far
+                  example: 10

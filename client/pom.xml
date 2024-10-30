@@ -23,6 +23,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>mplex-device</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>client-api</artifactId>
+        </dependency>
 
         <!-- Rest        -->
         <dependency>
