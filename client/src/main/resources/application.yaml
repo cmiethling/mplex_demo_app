@@ -1,7 +1,7 @@
 # suppress inspection "UnusedProperty" for whole file
 server:
   port: 8090
-# emulator has different port, this is default livereload port
+# emulator has different port; this is default livereload port
 spring:
   devtools:
     livereload:
