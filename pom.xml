@@ -1,5 +1,5 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cmiethling.mplex</groupId>
@@ -15,14 +15,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.4</version>
+        <version>3.3.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
         <java.version>21</java.version>
         <!-- <spring.version>${project.parent.version}</spring.version> geht leider nicht!-->
-        <spring.version>3.3.4</spring.version>
+        <spring.version>3.3.5</spring.version>
         <thymeleaf.extras.springsecurity6.version>3.1.2.RELEASE</thymeleaf.extras.springsecurity6.version>
     </properties>
 
@@ -37,12 +37,9 @@
 
     <!-- All modules are build with this reactor. -->
     <modules>
-        <!--        <module>commons</module>-->
-        <!--        <module>script</module>-->
         <module>device</module>
         <module>emulator</module>
         <module>client</module>
-        <!--        <module>controller</module>-->
     </modules>
 
     <dependencyManagement>
